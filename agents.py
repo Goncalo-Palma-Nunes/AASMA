@@ -123,6 +123,11 @@ class Agent:
     def message(self, other_agent):
         other_agent.receiveMessage(self.getEnv())
 
+    def communicate(self):
+        for player in self.getOtherPlayers():
+            if self.withinRange(player):
+                self.message(player)
+
     # Abstract methods
 
     @abc.abstractmethod
