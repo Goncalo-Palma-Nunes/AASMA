@@ -5,15 +5,17 @@ from game import Game
 import pygame
 
 if __name__ == "__main__":
-    board_size = 32
     cell_size = 32
-    num_rounds = 1
-    num_turns = 30 # Turns per round
-    step_time = 500 # Milliseconds per game step
-    player_count = 2
+    board_size = 32
+    resource_frequency = 0.1
+    resource_growth_frequency = 0.2
+    num_rounds = 100
+    num_turns = 50 # Turns per round
+    step_time = 10 # Milliseconds per game step
+    player_count = 20
 
     # Initialize board and game
-    board = Board(board_size)
+    board = Board(board_size, resource_frequency, resource_growth_frequency)
     board.generateResources()
     players = [RandomWalker(board, 0, lambda x: 0) for i in range(player_count)]
     game = Game(board, players, num_rounds, num_turns)
