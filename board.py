@@ -3,8 +3,6 @@ from random import random
 # Constants
 EMPTY = 0
 RESOURCE = 1
-AGENT = 2
-NO_AGENT = 3
 
 class Board:
 
@@ -19,7 +17,7 @@ class Board:
     # Inner Class
     class Cell:
         # Inner Class Constructor
-        def __init__(self, resource=EMPTY, agent=NO_AGENT, timestamp=0):
+        def __init__(self, resource=EMPTY, agent=None, timestamp=0):
             self.setAgent(agent)
             self.setResource(resource)
             self.setTimestamp(timestamp)
@@ -56,10 +54,12 @@ class Board:
             self.setResource(EMPTY)
 
         def noAgent(self):
-            return self.getAgent() == NO_AGENT
-        
-        def addAgent(self):
-            self.setAgent(AGENT)
+            return self.getAgent() is None
+
+        def removeAgent(self):
+            agent = self.getAgent()
+            self.setAgent(None)
+            return agent
 
         def isOlder(self, other):
             if not isinstance(other, self.__class__):
@@ -114,11 +114,11 @@ class Board:
     def noAgent(self, i, j):
         return self.getCell(i, j).noAgent()
     
-    def addAgent(self, i, j):
-        self.getCell(i, j).addAgent()
+    def addAgent(self, i, j, agent):
+        self.getCell(i, j).setAgent(agent)
 
     def removeAgent(self, i, j):
-        self.getCell(i, j).removeAgent()
+        return self.getCell(i, j).removeAgent()
 
     def noResource(self, i, j):
         return self.getCell(i, j).noResource()
@@ -199,8 +199,8 @@ class Board:
         if not self.noAgent(new_i, new_j):
             raise ValueError("Another agent already at the new position.")
         
-        self.removeAgent(old_i, old_j)
-        self.addAgent(new_i, new_j)
+        agent = self.removeAgent(old_i, old_j)
+        self.addAgent(new_i, new_j, agent)
 
     def __str__(self):
         return "Board Size: " + str(self.getBoardSize()) + "\n" + \
