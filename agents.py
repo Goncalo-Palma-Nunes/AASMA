@@ -118,7 +118,7 @@ class Agent:
 
     def __str__(self):
         return "Agent: " + str(self.__class__) + "\n" + \
-               "Env: " + str(self.env) + "\n" + \
+                "id: " + str(self.id) + "\n" + \
                "Endowment: " + str(self.endowment) + "\n" + \
                "Utility Function: " + str(self.utility_function) + "\n"
             
