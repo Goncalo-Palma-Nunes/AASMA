@@ -13,6 +13,8 @@ class Game:
         self.setPlayers(players)
         self.setCurrentRound(0)
         self.setCurrentTurn(0)
+        self.setDone(False)
+        self.setTotalReward(0)
 
     def getBoard(self):
         return self.board
@@ -34,6 +36,12 @@ class Game:
     
     def getCurrentTurn(self):
         return self.current_turn
+
+    def getTotalReward(self):
+        return self.total_reward
+
+    def getDone(self):
+        return self.done
     
     def setBoard(self, board):
         if not isinstance(board, Board):
@@ -88,6 +96,17 @@ class Game:
             raise ValueError("Current turn must be less than the number of turns.")
         self.current_turn = current_turn
 
+    def setDone(self, done):
+        if not isinstance(done, bool):
+            raise ValueError("Done must be a boolean")
+        self.done = done
+
+    def setTotalReward(self, total_reward):
+        self.total_reward = total_reward
+
+    def addTotalReward(self, reward):
+        self.setTotalReward(self.getTotalReward() + reward)
+
     def remainingTurns(self):
         return self.getNumTurns() - self.getCurrentTurn()
     
@@ -104,19 +123,20 @@ class Game:
     def nextTurn(self):
         self.setCurrentTurn(self.getCurrentTurn() + 1)
 
-    def play(self):
-        total_reward = 0
+    def step(self):
+        if self.getDone():
+            return
 
-        for i in range(self.getNumRounds()):
-            for j in range(self.getNumTurns()):
-                for player in self.getPlayers():
-                    total_reward += player.act()
+        for player in self.getPlayers():
+            self.addTotalReward(player.act())
 
-                self.nextTurn()
-
-            self.nextRound()
-
-        return total_reward
+        if self.remainingTurns() == 1:
+            if self.remainingRounds() == 1:
+                self.setDone(True)
+            else:
+                self.nextRound()
+        else:
+            self.nextTurn()
 
     def __str__(self):
         return "Game: " + str(self.__class__) + "\n" + \

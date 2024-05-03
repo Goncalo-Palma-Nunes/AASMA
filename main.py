@@ -5,21 +5,37 @@ from game import Game
 import pygame
 
 if __name__ == "__main__":
+    board_size = 32
     cell_size = 32
-    board = Board(32)
+    num_rounds = 1
+    num_turns = 30 # Turns per round
+    step_time = 500 # Milliseconds per game step
+    player_count = 2
+
+    # Initialize board and game
+    board = Board(board_size)
     board.generateResources()
-    players = [RandomWalker(board, 0, lambda x: 0) for i in range(2)]
-    game = Game(board, players, num_rounds=1, num_turns=1)
+    players = [RandomWalker(board, 0, lambda x: 0) for i in range(player_count)]
+    game = Game(board, players, num_rounds, num_turns)
 
     pygame.init()
     screen = pygame.display.set_mode([board.getBoardSize() * cell_size, board.getBoardSize() * cell_size])
     running = True
+
+    last_step_time = pygame.time.get_ticks()
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
+        # If enough time has passed, step the game
+        current_time = pygame.time.get_ticks()
+        if current_time >= last_step_time + step_time:
+            last_step_time = current_time
+            game.step()
+            
+        # Draw the board
         screen.fill((0, 200, 0))
         for i in range(board.getBoardSize()):
             for j in range(board.getBoardSize()):
