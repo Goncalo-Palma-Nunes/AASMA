@@ -35,7 +35,7 @@ if __name__ == "__main__":
                         pygame.draw.circle(screen, (200, 0, 0), cell_center, 0.25 * cell_size)
                 else:
                     # TODO: draw agent sprite
-                    pygame.draw.circle(screen, (0, 0, 200), cell_center, 0.3 * cell_size)
+                    pygame.draw.circle(screen, (0, 0, 200), cell_center, 0.4 * cell_size)
         pygame.display.flip()
 
     pygame.quit()
