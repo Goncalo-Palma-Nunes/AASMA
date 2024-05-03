@@ -11,12 +11,14 @@ class Agent:
     __metaclass__ = abc.ABCMeta
     id = itertools.count()
     
-    def __init__(self, env, endowment, utility_function, position=None):
+    def __init__(self, env, endowment, utility_function, position=None, other_players=[]):
         self.setEnv(env)
         self.setEndowment(endowment)
         self.setUtilityFunction(utility_function)
         self.id = next(self.id)
         self.position = position
+
+    # Getters and setters
 
     def getEnv(self):
         return self.env
@@ -26,6 +28,9 @@ class Agent:
     
     def getPosition(self):
         return self.position
+    
+    def getOtherPlayers(self):
+        return self.other_players
     
     def utilityFunction(self):
         return self.utility_function
@@ -50,6 +55,15 @@ class Agent:
         if any (i > self.getEnv().getBoardSize() for i in position):
             raise ValueError("Position must be within the bounds of the board.")
         self.position = position
+
+    def setOtherPlayers(self, other_players):
+        if not isinstance(other_players, (list, tuple)):
+            raise ValueError("Other players must be a list or tuple.")
+        if not all(isinstance(player, Agent) for player in other_players):
+            raise ValueError("Other players must be a list or tuple of agents.")
+        self.other_players = other_players
+
+    # Methods
 
     def onResource(self):
         return self.getEnv().hasResource(self.getPosition()[0], self.getPosition()[1])
@@ -81,6 +95,9 @@ class Agent:
         self.setPosition(new_position)
 
         return new_position
+    
+
+    # Abstract methods
 
     @abc.abstractmethod
     def act(self):
