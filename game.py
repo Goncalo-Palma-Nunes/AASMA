@@ -2,6 +2,9 @@ from random_walker import RandomWalker
 from agents import Agent
 from board import Board
 
+from math import floor
+from random import random
+
 class Game:
     def __init__(self, board=None, players=[], num_players=2,
                 num_rounds=1, num_turns=1):
@@ -59,6 +62,11 @@ class Game:
         if len(players) == 0:
             for i in range(players):
                 self.players.append(RandomWalker(self, 0, lambda x: 0))
+
+        for player in self.players:
+            position = tuple(floor(random() * self.getBoardSize()) for i in range(2))
+            player.setPosition(position)
+            self.getBoard().addAgent(position[0], position[1], player)
 
     def setNumPlayers(self, num_players):
         if not isinstance(num_players, int) or num_players < 0:
