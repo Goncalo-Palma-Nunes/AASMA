@@ -11,11 +11,12 @@ class Agent:
     __metaclass__ = abc.ABCMeta
     id = itertools.count()
     
-    def __init__(self, env, endowment, utility_function, position=None, other_players=[]):
+    def __init__(self, env : Board, endowment, utility_function, position=None, other_players=[]):
         self.setEnv(env)
         self.setEndowment(endowment)
         self.setUtilityFunction(utility_function)
         self.id = next(self.id)
+        self.setOtherPlayers(other_players)
         self.position = position
 
     # Getters and setters
@@ -96,6 +97,14 @@ class Agent:
 
         return new_position
     
+    def perceive(self, real_board : Board):
+        i, j = self.getPosition()
+
+        for k in range(i - 4, i + 5): # Perceive a square of size 4
+            for l in range(j - 4, j + 5): # with center at agent's position
+                if self.getEnv().validPosition(k, l): # If within board
+                    # Update with perceived information
+                    self.getEnv().setCell(k, l, real_board.getCell(k, l))
 
     # Abstract methods
 
