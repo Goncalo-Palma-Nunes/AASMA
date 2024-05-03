@@ -106,6 +106,23 @@ class Agent:
                     # Update with perceived information
                     self.getEnv().setCell(k, l, real_board.getCell(k, l))
 
+    def withinRange(self, other_agent):
+        return abs(self.getPosition()[0] - other_agent.getPosition()[0]) <= 4 and \
+               abs(self.getPosition()[1] - other_agent.getPosition()[1]) <= 4
+    
+    def receiveMessage(self, message : Board):
+        size = message.getBoardSize()
+        for i in range(size):
+            for j in range(size):
+                current_cell = self.getEnv().getCell(i, j)
+                message_cell = message.getCell(i, j)
+
+                if current_cell.isOlder(message_cell):
+                    self.getEnv().setCell(i, j, message_cell)
+
+    def message(self, other_agent):
+        other_agent.receiveMessage(self.getEnv())
+
     # Abstract methods
 
     @abc.abstractmethod
