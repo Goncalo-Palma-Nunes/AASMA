@@ -1,5 +1,6 @@
 import abc
 from board import Board
+import itertools
 
 UP = "up"
 DOWN = "down"
@@ -8,13 +9,14 @@ RIGHT = "right"
 
 class Agent:
     __metaclass__ = abc.ABCMeta
+    id = itertools.count()
+    
 
     def __init__(self, env, endowment, utility_function, position=None):
         self.setEnv(env)
         self.setEndowment(endowment)
         self.setUtilityFunction(utility_function)
-        self.endowment = endowment
-        self.utility_function = utility_function
+        self.id = next(self.id)
         self.position = position
 
     def getEnv(self):
