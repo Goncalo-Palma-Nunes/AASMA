@@ -4,15 +4,37 @@ from game import Game
 
 import pygame
 
+class CellSprite:
+    def __init__(self, cell_size, scale, path):
+        self.cell_size = cell_size
+
+        src_image = pygame.image.load(path)
+        src_image = pygame.transform.scale_by(src_image, (scale, scale))
+
+        self.image = pygame.Surface((cell_size, cell_size), pygame.SRCALPHA, 32)
+        image_center = (cell_size / 2, cell_size / 2)
+
+        self.image.blit(src_image, src_image.get_rect(center=image_center))
+
+    def drawTo(self, surface, i, j):
+        surface.blit(self.image, (i * self.cell_size, j * self.cell_size))
+
 if __name__ == "__main__":
+    # Set some parameters
     cell_size = 32
     board_size = 32
     resource_frequency = 0.1
     resource_growth_frequency = 0.2
     num_rounds = 100
     num_turns = 50 # Turns per round
-    step_time = 10 # Milliseconds per game step
+    step_time = 250 # Milliseconds per game step
     player_count = 20
+
+    # Load sprites
+    apple_sprite = CellSprite(cell_size, 2, "assets/apple.png")
+    grass_sprite = CellSprite(cell_size, 2, "assets/grass.png")
+    slime_sprites = ["slime_bluegreen.png", "slime_gold.png", "slime_pink.png", "slime_purple.png"]
+    slime_sprites = [CellSprite(cell_size, 2, f"assets/{name}") for name in slime_sprites]
 
     # Initialize board and game
     board = Board(board_size, resource_frequency, resource_growth_frequency)
@@ -44,16 +66,13 @@ if __name__ == "__main__":
                 cell_center = ((i + 0.5) * cell_size, (j + 0.5) * cell_size)
 
                 cell = board.getCell(i, j)
+                grass_sprite.drawTo(screen, i, j)
+
                 if cell.noAgent():
-                    if cell.noResource():
-                        # TODO: draw grass sprite
-                        pass
-                    else:
-                        # TODO: draw resource sprite
-                        pygame.draw.circle(screen, (200, 0, 0), cell_center, 0.25 * cell_size)
+                    if not cell.noResource():
+                        apple_sprite.drawTo(screen, i, j)
                 else:
-                    # TODO: draw agent sprite
-                    pygame.draw.circle(screen, (0, 0, 200), cell_center, 0.4 * cell_size)
+                    slime_sprites[0].drawTo(screen, i, j)
         pygame.display.flip()
 
     pygame.quit()
