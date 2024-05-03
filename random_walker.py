@@ -21,8 +21,6 @@ class RandomWalker(Agent):
                 possible_directions.remove(direction)
                 direction = None
             
-        self.move(direction)
-
         return 0
 
     def update(self, state, action, reward, next_state):
