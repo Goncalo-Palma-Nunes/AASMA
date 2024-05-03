@@ -9,7 +9,7 @@ if __name__ == "__main__":
     board = Board(32)
     board.generateResources()
     players = [RandomWalker(board, 0, lambda x: 0) for i in range(2)]
-    game = Game(board, players, num_players=2, num_rounds=1, num_turns=1)
+    game = Game(board, players, num_rounds=1, num_turns=1)
 
     pygame.init()
     screen = pygame.display.set_mode([board.getBoardSize() * cell_size, board.getBoardSize() * cell_size])

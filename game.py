@@ -6,10 +6,8 @@ from math import floor
 from random import random
 
 class Game:
-    def __init__(self, board=None, players=[], num_players=2,
-                num_rounds=1, num_turns=1):
+    def __init__(self, board=None, players=[], num_rounds=1, num_turns=1):
         self.setBoard(board)
-        self.setNumPlayers(num_players)
         self.setNumRounds(num_rounds)
         self.setNumTurns(num_turns)
         self.setPlayers(players)
@@ -24,9 +22,6 @@ class Game:
     
     def getBoardSize(self):
         return self.board.getBoardSize()
-    
-    def getNumPlayers(self):
-        return self.num_players
     
     def getNumRounds(self):
         return self.num_rounds
@@ -48,10 +43,11 @@ class Game:
     def setPlayers(self, players):
         if not isinstance(players, (list, tuple)):
             raise TypeError("Players must be a list or tuple")
-        self.players = players
 
-        if len(players) != self.getNumPlayers():
-            raise ValueError("Number of players must match the number of players in the game.")
+        if len(players) > self.getBoardSize() ** 2:
+            raise ValueError("Number of players must be less than or equal to the board size squared.")
+
+        self.players = players
 
         if not all(isinstance(player, Agent) for player in players):
             raise ValueError("Players must be a list or tuple of agents.")
@@ -67,13 +63,6 @@ class Game:
             position = tuple(floor(random() * self.getBoardSize()) for i in range(2))
             player.setPosition(position)
             self.getBoard().addAgent(position[0], position[1], player)
-
-    def setNumPlayers(self, num_players):
-        if not isinstance(num_players, int) or num_players < 0:
-            raise ValueError("Number of players must be a positive integer.")
-        if num_players > self.getBoard().getBoardSize():
-            raise ValueError("Number of players must be less than the board size.")
-        self.num_players = num_players
 
     def setNumRounds(self, num_rounds):
         if not isinstance(num_rounds, int) or num_rounds < 0:
@@ -133,6 +122,6 @@ class Game:
         return "Game: " + str(self.__class__) + "\n" + \
                 "Board: " + str(self.board) + "\n" + \
                 "Players: " + str(self.players) + "\n" + \
-                "Number of Players: " + str(self.num_players) + "\n" + \
+                "Number of Players: " + str(len(self.players)) + "\n" + \
                 "Number of Rounds: " + str(self.num_rounds) + "\n" + \
                 "Number of Turns: " + str(self.num_turns) + "\n"
