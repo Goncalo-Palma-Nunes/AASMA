@@ -5,10 +5,10 @@ from board import Board
 class Game:
     def __init__(self, board=None, players=[], num_players=2,
                 num_rounds=1, num_turns=1):
+        self.setBoard(board)
         self.setNumPlayers(num_players)
         self.setNumRounds(num_rounds)
         self.setNumTurns(num_turns)
-        self.setBoard(board)
         self.setPlayers(players)
         self.setCurrentRound(0)
         self.setCurrentTurn(0)
@@ -128,11 +128,3 @@ class Game:
                 "Number of Players: " + str(self.num_players) + "\n" + \
                 "Number of Rounds: " + str(self.num_rounds) + "\n" + \
                 "Number of Turns: " + str(self.num_turns) + "\n"
-    
-
-if __name__ == "__main__":
-    board = Board(3)
-    board.generateResources()
-    board.printBoard()
-    #players = [RandomWalker(board, 0, lambda x: 0) for i in range(2)]
-    #game = Game(board, players, 2, 1, 1, 1.0)
