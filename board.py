@@ -1,30 +1,86 @@
 from random import random
 
+# Constants
 EMPTY = 0
 RESOURCE = 1
 AGENT = 2
 NO_AGENT = 3
 
 class Board:
-    def __init__(self, board_size, resource_frequency=.1, resource_growth_frequency=.5):
+
+    # Class Constructor
+    def __init__(self, board_size, resource_frequency=.1, resource_growth_frequency=.5, timestamp=0):
         self.setBoardSize(board_size)
         self.setResourceFrequency(resource_frequency)
-        self.setResourceGrowthFrequency(resource_growth_frequency)
-        self.board = [[[EMPTY, NO_AGENT] for i in range(board_size)] for j in range(board_size)]
+        self.setResourceGrowthFrequency(resource_growth_frequency)        
+        self.setTimestamp(timestamp)
+        self.board = [[self.Cell() for i in range(board_size)] for j in range(board_size)]
 
-    def __convertCellToString(self, cell):
-        output = "("
-        for i in cell:
-            if i == EMPTY:
+    # Inner Class
+    class Cell:
+        # Inner Class Constructor
+        def __init__(self, resource=EMPTY, agent=NO_AGENT, timestamp=0):
+            self.setAgent(agent)
+            self.setResource(resource)
+            self.setTimestamp(timestamp)
+
+        # Inner Class Getters/Setters
+
+        def getResource(self):
+            return self.resource
+        
+        def getAgent(self):
+            return self.agent
+        
+        def setResource(self, resource):
+            self.resource = resource
+
+        def setAgent(self, agent):
+            self.agent = agent
+
+        def getTimestamp(self):
+            return self.timestamp
+        
+        def setTimestamp(self, timestamp):
+            self.timestamp = timestamp
+
+        # Inner Class Methods
+
+        def noResource(self):
+            return self.getResource() == EMPTY
+        
+        def addResource(self):
+            self.setResource(RESOURCE)
+
+        def removeResource(self):
+            self.setResource(EMPTY)
+
+        def noAgent(self):
+            return self.getAgent() == NO_AGENT
+        
+        def addAgent(self):
+            self.setAgent(AGENT)
+
+        def isOlder(self, other):
+            if not isinstance(other, self.__class__):
+                raise TypeError("Cannot compare different types.")
+            
+            return self.getTimestamp() < other.getTimestamp()
+
+        def __str__(self):
+            output = "("
+            if self.noResource():
                 output += "Empty; "
-            elif i == RESOURCE:
+            else:
                 output += "Resource; "
-            elif i == AGENT:
-                output += "Agent; "
-            elif i == NO_AGENT:
+            if self.noAgent():
                 output += "No Agent; "
-        output = output[:-2] + ")"
-        return output
+            else:
+                output += "Agent; "
+            output = str(self.getTimestamp()) + ")"
+            return output
+        
+    # Class Getters/Setters
 
     def getBoardSize(self):
         return self.board_size
@@ -38,26 +94,34 @@ class Board:
     def getCell(self, i, j):
         return self.board[i][j]
     
+    def getTimestamp(self):
+        return self.timestamp
+    
     def setCell(self, i, j, cell):
         self.board[i][j] = cell
+
+    def setTimestamp(self, timestamp):
+        self.timestamp = timestamp
+
+    # Class Methods
 
     def isCell(self, i, j):
         return i >= 0 and i < self.board_size and j >= 0 and j < self.board_size
 
     def noAgent(self, i, j):
-        return self.getCell(i, j)[1] == NO_AGENT
+        return self.getCell(i, j).noAgent()
     
     def addAgent(self, i, j):
-        self.setCell(i, j, (self.getCell(i, j)[0], AGENT))
+        self.getCell(i, j).addAgent()
 
     def removeAgent(self, i, j):
-        self.setCell(i, j, (self.getCell(i, j)[0], NO_AGENT))
+        self.getCell(i, j).removeAgent()
 
     def noResource(self, i, j):
-        return self.getCell(i, j)[0] == EMPTY
+        return self.getCell(i, j).noResource()
 
     def hasResource(self, i, j):
-        return self.isCell(i, j) and self.getCell(j, j)[0] == RESOURCE
+        return not self.noResource(i, j)
 
     def countNeighborResources(self, i, j):
         count = 0
@@ -72,10 +136,10 @@ class Board:
         return count
 
     def addResource(self, i, j):
-        self.setCell(i, j, (RESOURCE, self.getCell(i, j)[1]))
+        self.getCell(i, j).addResource()
 
     def removeResource(self, i, j):
-        self.setCell(i, j, (EMPTY, self.getCell(i, j)[1]))
+        self.getCell(i, j).removeResource()
     
     def setBoardSize(self, board_size):
         if not isinstance(board_size, int):
@@ -104,22 +168,22 @@ class Board:
     def growResources(self):
         for i in range(self.getBoardSize()):
             for j in range(self.getBoardSize()):
-                if (self.noResource(i, j))
-                    if random() < self.getResourceGrowthFrequency() * self.countNeighborResources(i, j)
+                if (self.noResource(i, j)):
+                    if random() < self.getResourceGrowthFrequency() * self.countNeighborResources(i, j):
                         self.addResource(i, j)
 
     def resetBoard(self):
-        self.board = [[(EMPTY, NO_AGENT) for i in range(self.getBoardSize())] for j in range(self.getBoardSize())]
+        self.board = [[self.Cell() for i in range(self.getBoardSize())] for j in range(self.getBoardSize())]
 
     def printBoard(self):
         for i in range(self.getBoardSize()):
             for j in range(self.getBoardSize()):
-                print(self.__convertCellToString(self.getCell(i, j)), end=" ")
+                print(self.getCell(i, j), end=" ")
             print()
         print()
 
     def hasResource(self, i, j):
-        return self.getCell(i, j)[0] == RESOURCE
+        return not self.noResource(i, j)
     
     def validPosition(self, i, j):
         return i >= 0 and i < self.getBoardSize() and j >= 0 and j < self.getBoardSize()

@@ -11,7 +11,6 @@ class Agent:
     __metaclass__ = abc.ABCMeta
     id = itertools.count()
     
-
     def __init__(self, env, endowment, utility_function, position=None):
         self.setEnv(env)
         self.setEndowment(endowment)
