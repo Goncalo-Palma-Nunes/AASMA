@@ -105,6 +105,9 @@ class Board:
 
     # Class Methods
 
+    def incrementTimestamp(self):
+        self.setTimestamp(self.getTimestamp() + 1)
+
     def isCell(self, i, j):
         return i >= 0 and i < self.board_size and j >= 0 and j < self.board_size
 
