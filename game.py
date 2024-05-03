@@ -4,11 +4,10 @@ from board import Board
 
 class Game:
     def __init__(self, board=None, players=[], num_players=2,
-                num_rounds=1, num_turns=1, growth_rate=1.0):
+                num_rounds=1, num_turns=1):
         self.setNumPlayers(num_players)
         self.setNumRounds(num_rounds)
         self.setNumTurns(num_turns)
-        self.setGrowthRate(growth_rate)
         self.setBoard(board)
         self.setPlayers(players)
         self.setCurrentRound(0)
@@ -31,9 +30,6 @@ class Game:
     
     def getNumTurns(self):
         return self.num_turns
-    
-    def getGrowthRate(self):
-        return self.growth_rate
     
     def getCurrentRound(self):
         return self.current_round
@@ -81,11 +77,6 @@ class Game:
             raise ValueError("Number of turns must be a positive integer.")
         self.num_turns = num_turns
 
-    def setGrowthRate(self, growth_rate):
-        if not isinstance(growth_rate, float) or growth_rate < 0.0 or growth_rate > 1.0:
-            raise ValueError("Growth rate must be a valid probability value.")
-        self.growth_rate = growth_rate
-
     def setCurrentRound(self, current_round):
         if not isinstance(current_round, int) or current_round < 0:
             raise ValueError("Current round must be a positive integer.")
@@ -109,6 +100,7 @@ class Game:
     def nextRound(self):
         self.setCurrentRound(self.getCurrentRound() + 1)
         self.setCurrentTurn(0)
+        self.board.growResources()
 
         # TODO - vote
 
@@ -135,8 +127,7 @@ class Game:
                 "Players: " + str(self.players) + "\n" + \
                 "Number of Players: " + str(self.num_players) + "\n" + \
                 "Number of Rounds: " + str(self.num_rounds) + "\n" + \
-                "Number of Turns: " + str(self.num_turns) + "\n" + \
-                "Growth Rate: " + str(self.growth_rate) + "\n"
+                "Number of Turns: " + str(self.num_turns) + "\n"
     
 
 if __name__ == "__main__":

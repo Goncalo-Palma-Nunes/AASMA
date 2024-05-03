@@ -6,9 +6,10 @@ AGENT = 2
 NO_AGENT = 3
 
 class Board:
-    def __init__(self, board_size, resourceFrequency=.1):
+    def __init__(self, board_size, resource_frequency=.1, resource_growth_frequency=.5):
         self.setBoardSize(board_size)
-        self.setResourceFrequency(resourceFrequency)
+        self.setResourceFrequency(resource_frequency)
+        self.setResourceGrowthFrequency(resource_growth_frequency)
         self.board = [[[EMPTY, NO_AGENT] for i in range(board_size)] for j in range(board_size)]
 
     def __convertCellToString(self, cell):
@@ -32,13 +33,16 @@ class Board:
         return self.board
     
     def getResourceFrequency(self):
-        return self.resourceFrequency
+        return self.resource_frequency
     
     def getCell(self, i, j):
         return self.board[i][j]
     
     def setCell(self, i, j, cell):
         self.board[i][j] = cell
+
+    def isCell(self, i, j):
+        return i >= 0 and i < self.board_size and j >= 0 and j < self.board_size
 
     def noAgent(self, i, j):
         return self.getCell(i, j)[1] == NO_AGENT
@@ -51,7 +55,22 @@ class Board:
 
     def noResource(self, i, j):
         return self.getCell(i, j)[0] == EMPTY
-    
+
+    def hasResource(self, i, j):
+        return self.isCell(i, j) and self.getCell(j, j)[0] == RESOURCE
+
+    def countNeighborResources(self, i, j):
+        count = 0
+        if self.hasResource(i - 1, j):
+            count = count + 1
+        if self.hasResource(i + 1, j):
+            count = count + 1
+        if self.hasResource(i, j - 1):
+            count = count + 1
+        if self.hasResource(i, j + 1):
+            count = count + 1
+        return count
+
     def addResource(self, i, j):
         self.setCell(i, j, (RESOURCE, self.getCell(i, j)[1]))
 
@@ -63,19 +82,31 @@ class Board:
             raise TypeError("Board size must be an integer.")
         self.board_size = board_size
 
-    def setResourceFrequency(self, resourceFrequency):
-        if (not isinstance(resourceFrequency, float) or resourceFrequency < 0 
-            or resourceFrequency > 1):
+    def setResourceFrequency(self, resource_frequency):
+        if (not isinstance(resource_frequency, float) or resource_frequency < 0 
+            or resource_frequency > 1):
             raise TypeError("Resource frequency must be a valid probability value.")
-        self.resourceFrequency = resourceFrequency
+        self.resource_frequency = resource_frequency
+
+    def setResourceGrowthFrequency(self, resource_growth_frequency):
+        if (not isinstance(resource_growth_frequency, float) or resource_growth_frequency < 0 
+            or resource_growth_frequency > 1):
+            raise TypeError("Resource growth frequency must be a valid probability value.")
+        self.resource_growth_frequency = resource_growth_frequency
 
     def generateResources(self):
         for i in range(self.getBoardSize()):
             for j in range(self.getBoardSize()):
                 if (self.noResource(i, j)
                     and random() < self.getResourceFrequency()):
-
                     self.addResource(i, j)
+
+    def growResources(self):
+        for i in range(self.getBoardSize()):
+            for j in range(self.getBoardSize()):
+                if (self.noResource(i, j))
+                    if random() < self.getResourceGrowthFrequency() * self.countNeighborResources(i, j)
+                        self.addResource(i, j)
 
     def resetBoard(self):
         self.board = [[(EMPTY, NO_AGENT) for i in range(self.getBoardSize())] for j in range(self.getBoardSize())]
