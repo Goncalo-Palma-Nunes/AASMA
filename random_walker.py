@@ -11,7 +11,16 @@ class RandomWalker(Agent):
             self.getEnv().removeResource(self.getPosition()[0], self.getPosition()[1])
             return 1
         
-        direction = random.choice([UP, DOWN, LEFT, RIGHT])
+        possible_directions = [UP, DOWN, LEFT, RIGHT]
+        direction = None
+        while not (len(possible_directions) == 0) and direction is None:
+            direction = random.choice(possible_directions)
+            try:
+                self.move(direction)
+            except ValueError:
+                possible_directions.remove(direction)
+                direction = None
+            
         self.move(direction)
 
         return 0
