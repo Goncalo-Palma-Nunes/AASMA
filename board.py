@@ -90,6 +90,9 @@ class Board:
     
     def getResourceFrequency(self):
         return self.resource_frequency
+
+    def getResourceGrowthFrequency(self):
+        return self.resource_growth_frequency
     
     def getCell(self, i, j):
         return self.board[i][j]
@@ -128,13 +131,13 @@ class Board:
 
     def countNeighborResources(self, i, j):
         count = 0
-        if self.hasResource(i - 1, j):
+        if self.isCell(i - 1, j) and self.hasResource(i - 1, j):
             count = count + 1
-        if self.hasResource(i + 1, j):
+        if self.isCell(i + 1, j) and self.hasResource(i + 1, j):
             count = count + 1
-        if self.hasResource(i, j - 1):
+        if self.isCell(i, j - 1) and self.hasResource(i, j - 1):
             count = count + 1
-        if self.hasResource(i, j + 1):
+        if self.isCell(i, j + 1) and self.hasResource(i, j + 1):
             count = count + 1
         return count
 
@@ -169,11 +172,15 @@ class Board:
                     self.addResource(i, j)
 
     def growResources(self):
+        growth_positions = []
         for i in range(self.getBoardSize()):
             for j in range(self.getBoardSize()):
                 if (self.noResource(i, j)):
                     if random() < self.getResourceGrowthFrequency() * self.countNeighborResources(i, j):
-                        self.addResource(i, j)
+                        growth_positions.append((i, j))
+
+        for (i, j) in growth_positions:
+            self.addResource(i, j)
 
     def resetBoard(self):
         self.board = [[self.Cell() for i in range(self.getBoardSize())] for j in range(self.getBoardSize())]
