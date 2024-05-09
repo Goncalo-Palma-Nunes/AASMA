@@ -6,16 +6,21 @@ UP = "up"
 DOWN = "down"
 LEFT = "left"
 RIGHT = "right"
+SUCCESS = 1
+FAILURE = 0
 
 class Agent:
     __metaclass__ = abc.ABCMeta
     id = itertools.count()
     
-    def __init__(self, env : Board, endowment, utility_function, position=None, other_players=[]):
+    def __init__(self, env : Board, endowment, utility_function, position=None,
+                  other_players=[], timestamp=0):
+        self.setTimeStamp(timestamp)
         self.setEnv(env)
         self.setEndowment(endowment)
         self.setUtilityFunction(utility_function)
         self.id = next(self.id)
+        self.other_players = dict()
         self.setOtherPlayers(other_players)
         self.position = position
 
@@ -36,6 +41,27 @@ class Agent:
     def getOtherPlayers(self):
         return self.other_players
     
+    def getTimeStamp(self):
+        return self.timestamp
+    
+    def getOtherPlayer(self, id):
+        return self.getOtherPlayers()[id][0]
+    
+    def getOtherPlayerTimestamp(self, id):
+        return self.getOtherPlayers()[id][2]
+    
+    def getOtherPlayerResources(self, id):
+        return self.getOtherPlayers()[id][1]
+    
+    def getId(self):
+        return self.id
+    
+    def getPlayer(self, id):
+        return self.getOtherPlayers()[id][0]
+    
+    def getPlayerResources(self, id):
+        return self.getOtherPlayers()[id][1]
+    
     def utilityFunction(self):
         return self.utility_function
     
@@ -43,6 +69,9 @@ class Agent:
         if not isinstance(env, Board):
             raise ValueError("Environment must be of type Board.")
         self.env = env
+
+    def setTimeStamp(self, timestamp):
+        self.timestamp = timestamp
 
     def setEndowment(self, endowment):
         self.endowment = endowment
@@ -63,9 +92,24 @@ class Agent:
     def setOtherPlayers(self, other_players):
         if not isinstance(other_players, (list, tuple)):
             raise ValueError("Other players must be a list or tuple.")
-        if not all(isinstance(player, Agent) for player in other_players):
-            raise ValueError("Other players must be a list or tuple of agents.")
-        self.other_players = other_players
+        for player in other_players:
+            if not isinstance(player, Agent):
+                raise ValueError("Other players must be of type Agent.")
+            self.addOtherPlayer(player)
+
+    def addOtherPlayer(self, player, resources=0, timestamp=0):
+        if not isinstance(player, Agent):
+            raise ValueError("Player must be of type Agent.")
+        self.other_players[player.getId()] = [player, resources, timestamp]
+
+    def updateOtherPlayerResources(self, id, resources):
+        self.getOtherPlayers()[id][1] = resources
+
+    def updateOtherPlayerTimeStamp(self, id, timestamp):
+        self.getOtherPlayers()[id][2] = timestamp
+
+    def incrementOtherPlayerTimeStamp(self, id):
+        self.getOtherPlayers()[id][2] += 1
 
     # Methods
 
@@ -91,6 +135,13 @@ class Agent:
             raise ValueError("Cannot move to a position with another agent.")
         
         return new_position
+
+    def eat(self):
+        if self.onResource():
+            self.setEndowment(self.getEndowment() + 1)
+            self.getEnv().removeResource(self.getPosition()[0], self.getPosition()[1])
+            return SUCCESS
+        return FAILURE
     
     def move(self, direction):
         new_position = self.__validateMove(direction)
@@ -113,21 +164,42 @@ class Agent:
         return abs(self.getPosition()[0] - other_agent.getPosition()[0]) <= 4 and \
                abs(self.getPosition()[1] - other_agent.getPosition()[1]) <= 4
     
-    def receiveMessage(self, message : Board):
-        size = message.getBoardSize()
+    def processNewBoard(self, new_board : Board):
+        size = new_board.getBoardSize()
         for i in range(size):
             for j in range(size):
                 current_cell = self.getEnv().getCell(i, j)
-                message_cell = message.getCell(i, j)
+                new_board_cell = new_board.getCell(i, j)
 
-                if current_cell.isOlder(message_cell):
-                    self.getEnv().setCell(i, j, message_cell)
+                if current_cell.isOlder(new_board_cell):
+                    self.getEnv().setCell(i, j, new_board_cell)
+
+    def processPlayerInfo(self, other_players : dict):
+        pass 
+
+    
+    def receiveMessage(self, message : Board, other_players : dict):
+        self.processNewBoard(message)
+
+        for key, value in other_players.items():
+            received_timestamp = value[2]
+            received_resources = value[1]
+
+            current_timestamp = self.getOtherPlayerTimestamp(key)
+            current_resources = self.getOtherPlayerResources(key)
+
+            if received_timestamp > current_timestamp or \
+                received_resources > current_resources:
+                self.updateOtherPlayerResources(key, received_resources)
+                self.updateOtherPlayerTimeStamp(key, received_timestamp)
+
 
     def message(self, other_agent):
-        other_agent.receiveMessage(self.getEnv())
+        other_agent.receiveMessage(self.getEnv(), self.getOtherPlayers())
 
     def communicate(self):
-        for player in self.getOtherPlayers():
+        for value in self.getOtherPlayers().values():
+            player = value[0]
             if self.withinRange(player):
                 self.message(player)
 

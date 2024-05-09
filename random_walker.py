@@ -6,10 +6,7 @@ class RandomWalker(Agent):
         Agent.__init__(self, env, endowment, utility_function)
     
     def act(self):
-        if self.onResource():
-            self.setEndowment(self.getEndowment() + 1)
-            self.getEnv().removeResource(self.getPosition()[0], self.getPosition()[1])
-            return 1
+        self.eat()
         
         possible_directions = [UP, DOWN, LEFT, RIGHT]
         direction = None
