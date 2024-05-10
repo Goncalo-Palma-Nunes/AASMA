@@ -91,10 +91,9 @@ if __name__ == "__main__":
                 cell = board.getCell(i, j)
                 grass_sprite.drawTo(screen, i, j)
 
-                if cell.noAgent():
-                    if not cell.noResource():
-                        apple_sprite.drawTo(screen, i, j)
-                else:
+                if not cell.noResource():
+                    apple_sprite.drawTo(screen, i, j)
+                if not cell.noAgent():
                     agent_sprites[cell.getAgent().getId()].drawTo(screen, i, j)
 
         pygame.display.flip()
