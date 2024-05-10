@@ -15,6 +15,8 @@ class Game:
         self.setCurrentTurn(0)
         self.setDone(False)
         self.setTotalReward(0)
+        self.setAccusations({})
+        self.setVotes({})
 
     def getBoard(self):
         return self.board
@@ -40,8 +42,41 @@ class Game:
     def getTotalReward(self):
         return self.total_reward
 
+    def getAccusations(self):
+        return self.accusations
+
+    def getMostAccused(self):
+        max_count = 0
+        most_accused = None
+        for player, count in self.getAccusations().items():
+            if count > max_count:
+                max_count = count
+                most_accused = player
+        return most_accused
+
+    def getVotes(self):
+        return self.votes
+    
+    def getMostVoted(self):
+        max_count = 0
+        most_voted = None
+        for player, count in self.getVotes().items():
+            if count > max_count:
+                max_count = count
+                most_voted = player
+        return most_voted
+
     def getDone(self):
         return self.done
+
+    def isRound(self):
+        return self.remainingTurns() > 0
+
+    def isAccusing(self):
+        return self.remainingTurns() == 1 and len(self.getAccusations()) == 0
+
+    def isVoting(self):
+        return self.remainingTurns() == 1 and len(self.getAccusations()) > 0
     
     def setBoard(self, board):
         if not isinstance(board, Board):
@@ -107,6 +142,12 @@ class Game:
     def addTotalReward(self, reward):
         self.setTotalReward(self.getTotalReward() + reward)
 
+    def setAccusations(self, accusations):
+        self.accusations = accusations
+
+    def setVotes(self, votes):
+        self.votes = votes
+
     def remainingTurns(self):
         return self.getNumTurns() - self.getCurrentTurn()
     
@@ -126,17 +167,57 @@ class Game:
     def step(self):
         if self.getDone():
             return
+        
+        if self.isAccusing():
+            # Collect accusations from players
+            accusations = {}
+            for player in self.getPlayers():
+                accused = player.accuse()
+                if accused in accusations:
+                    accusations[accused] += 1
+                else:
+                    accusations[accused] = 1
+            self.setAccusations(accusations)
+        elif self.isVoting():
+            accused = self.getMostAccused()
+            self.setAccusations({})
 
-        for player in self.getPlayers():
-            self.addTotalReward(player.act())
+            # Share information about the accused player's consumption
+            consumption = {}
+            for player in self.getPlayers():
+                consumption = consumption | player.disclose_consumption(accused)
 
-        if self.remainingTurns() == 1:
+            # Collect votes from players
+            votes = {}
+            no_votes = 0
+            yes_votes = 0
+            for player in self.getPlayers():
+                votes[player] = player.vote(consumption, accused)
+                if votes[player]:
+                    yes_votes += 1
+                else:
+                    no_votes += 1
+            self.setVotes(votes)
+
+            print(f"YES: {yes_votes}, NO: {no_votes} (accused: {accused.getId()})")
+            if yes_votes > no_votes:
+                print(f"{accused.getId()} was voted out.")
+                # TODO: remove player from game
+
             if self.remainingRounds() == 1:
                 self.setDone(True)
             else:
                 self.nextRound()
         else:
-            self.nextTurn()
+            for player in self.getPlayers():
+                self.addTotalReward(player.act())
+
+            if self.remainingTurns() == 1:
+                if self.remainingRounds() == 1:
+                    self.setDone(True)
+            else:
+                self.nextTurn()
+
 
     def __str__(self):
         return "Game: " + str(self.__class__) + "\n" + \

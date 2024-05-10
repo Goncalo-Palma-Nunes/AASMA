@@ -131,10 +131,21 @@ class Agent:
             if self.withinRange(player):
                 self.message(player)
 
+    def disclose_consumption(self, accused):
+        return {} # TODO
+
     # Abstract methods
 
     @abc.abstractmethod
     def act(self):
+        pass
+
+    @abc.abstractmethod
+    def accuse(self):
+        pass
+
+    @abc.abstractmethod
+    def vote(self, consumption, accused):
         pass
 
     @abc.abstractmethod

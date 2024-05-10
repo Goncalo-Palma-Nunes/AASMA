@@ -35,13 +35,15 @@ if __name__ == "__main__":
     resource_growth_frequency = 0.2
     num_rounds = 100
     num_turns = 50 # Turns per round
-    step_time = 250 # Milliseconds per game step
+    step_time = 25 # Milliseconds per game step
     player_count = 20
 
     # Initialize board and game
     board = Board(board_size, resource_frequency, resource_growth_frequency)
     board.generateResources()
     players = [RandomWalker(board, 0, lambda x: 0) for i in range(player_count)]
+    for i in range(player_count):
+        players[i].setOtherPlayers(players[:i] + players[i+1:])
     game = Game(board, players, num_rounds, num_turns)
 
     # Setup pygame
@@ -76,24 +78,31 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 running = False
 
-        # If enough time has passed, step the game
-        current_time = pygame.time.get_ticks()
-        if current_time >= last_step_time + step_time:
-            last_step_time = current_time
-            game.step()
-            
-        # Draw the board
-        for i in range(board.getBoardSize()):
-            for j in range(board.getBoardSize()):
-                cell_center = ((i + 0.5) * cell_size, (j + 0.5) * cell_size)
+        if game.isRound():
+            # If enough time has passed, advance a turn
+            current_time = pygame.time.get_ticks()
+            if current_time >= last_step_time + step_time:
+                last_step_time = current_time
+                game.step()
 
-                cell = board.getCell(i, j)
-                grass_sprite.drawTo(screen, i, j)
+            # Draw the board
+            for i in range(board.getBoardSize()):
+                for j in range(board.getBoardSize()):
+                    cell_center = ((i + 0.5) * cell_size, (j + 0.5) * cell_size)
 
-                if not cell.noResource():
-                    apple_sprite.drawTo(screen, i, j)
-                if not cell.noAgent():
-                    agent_sprites[cell.getAgent().getId()].drawTo(screen, i, j)
+                    cell = board.getCell(i, j)
+                    grass_sprite.drawTo(screen, i, j)
+
+                    if not cell.noResource():
+                        apple_sprite.drawTo(screen, i, j)
+                    if not cell.noAgent():
+                        agent_sprites[cell.getAgent().getId()].drawTo(screen, i, j)
+        elif game.isAccusing():
+            # Blabla
+            pass
+        elif game.isVoting():
+            # Blabla
+            pass
 
         pygame.display.flip()
 

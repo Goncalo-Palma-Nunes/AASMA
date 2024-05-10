@@ -23,6 +23,12 @@ class RandomWalker(Agent):
             
         return 0
 
+    def accuse(self):
+        return random.choice(self.getOtherPlayers())
+
+    def vote(self, consumption, accused):
+        return random.choice([True, False])
+
     def update(self, state, action, reward, next_state):
         pass
 
