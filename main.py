@@ -30,6 +30,7 @@ class CellSprite:
 if __name__ == "__main__":
     # Set some parameters
     cell_size = 32
+    sprite_scale = cell_size / 16
     board_size = 32
     resource_frequency = 0.1
     resource_growth_frequency = 0.2
@@ -56,11 +57,11 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode([board.getBoardSize() * cell_size, board.getBoardSize() * cell_size])
 
     # Load sprites
-    apple_sprite = CellSprite.fromFile(cell_size, 2, "assets/apple.png")
-    grass_sprite = CellSprite.fromFile(cell_size, 2, "assets/grass.png")
-    jail_sprite = CellSprite.fromFile(cell_size, 2, "assets/jail.png")
+    apple_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/apple.png")
+    grass_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/grass.png")
+    jail_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/jail.png")
     slime_sprites = ["slime_bluegreen.png", "slime_gold.png", "slime_pink.png", "slime_purple.png"]
-    slime_sprites = [CellSprite.fromFile(cell_size, 2, f"assets/{name}") for name in slime_sprites]
+    slime_sprites = [CellSprite.fromFile(cell_size, sprite_scale, f"assets/{name}") for name in slime_sprites]
 
     # Prepare agent sprites
     font = pygame.font.SysFont(None, 20)
