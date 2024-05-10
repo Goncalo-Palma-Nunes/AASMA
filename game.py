@@ -49,10 +49,15 @@ class Game:
     def getMostAccused(self):
         max_count = 0
         most_accused = None
-        for player, count in self.getAccusations().items():
-            if count > max_count:
-                max_count = count
-                most_accused = player
+        accusation_count = {}
+        for accused in self.getAccusations().values():
+            if accused in accusation_count:
+                accusation_count[accused] += 1
+            else:
+                accusation_count[accused] = 1
+            if accusation_count[accused] > max_count:
+                max_count = accusation_count[accused]
+                most_accused = accused
         return most_accused
 
     def getVotes(self):
@@ -74,7 +79,7 @@ class Game:
         return self.imprisoned
 
     def isRound(self):
-        return self.remainingTurns() > 0
+        return self.remainingTurns() > 1
 
     def isAccusing(self):
         return self.remainingTurns() == 1 and len(self.getAccusations()) == 0
@@ -179,11 +184,7 @@ class Game:
             # Collect accusations from players
             accusations = {}
             for player in self.getPlayers():
-                accused = player.accuse()
-                if accused in accusations:
-                    accusations[accused] += 1
-                else:
-                    accusations[accused] = 1
+                accusations[player] = player.accuse()
             self.setAccusations(accusations)
         elif self.isVoting():
             accused = self.getMostAccused()
