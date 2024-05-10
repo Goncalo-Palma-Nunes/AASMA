@@ -83,7 +83,6 @@ if __name__ == "__main__":
             game.step()
             
         # Draw the board
-        screen.fill((0, 200, 0))
         for i in range(board.getBoardSize()):
             for j in range(board.getBoardSize()):
                 cell_center = ((i + 0.5) * cell_size, (j + 0.5) * cell_size)
