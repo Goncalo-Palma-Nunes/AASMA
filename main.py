@@ -34,9 +34,9 @@ if __name__ == "__main__":
     resource_frequency = 0.1
     resource_growth_frequency = 0.2
     num_rounds = 100
-    num_turns = 50 # Turns per round
-    step_time = 25 # Milliseconds per game step
-    player_count = 20
+    num_turns = 10 # Turns per round
+    step_time = 250 # Milliseconds per game step
+    player_count = 5
 
     # Initialize board and game
     board = Board(board_size, resource_frequency, resource_growth_frequency)
@@ -53,6 +53,7 @@ if __name__ == "__main__":
     # Load sprites
     apple_sprite = CellSprite.fromFile(cell_size, 2, "assets/apple.png")
     grass_sprite = CellSprite.fromFile(cell_size, 2, "assets/grass.png")
+    jail_sprite = CellSprite.fromFile(cell_size, 2, "assets/jail.png")
     slime_sprites = ["slime_bluegreen.png", "slime_gold.png", "slime_pink.png", "slime_purple.png"]
     slime_sprites = [CellSprite.fromFile(cell_size, 2, f"assets/{name}") for name in slime_sprites]
 
@@ -97,6 +98,8 @@ if __name__ == "__main__":
                         apple_sprite.drawTo(screen, i, j)
                     if not cell.noAgent():
                         agent_sprites[cell.getAgent().getId()].drawTo(screen, i, j)
+                        if cell.getAgent() == game.getImprisoned():
+                            jail_sprite.drawTo(screen, i, j)
         elif game.isAccusing():
             # Blabla
             pass

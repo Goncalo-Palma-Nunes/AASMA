@@ -17,6 +17,7 @@ class Game:
         self.setTotalReward(0)
         self.setAccusations({})
         self.setVotes({})
+        self.setImprisoned(None)
 
     def getBoard(self):
         return self.board
@@ -68,6 +69,9 @@ class Game:
 
     def getDone(self):
         return self.done
+
+    def getImprisoned(self):
+        return self.imprisoned
 
     def isRound(self):
         return self.remainingTurns() > 0
@@ -148,6 +152,9 @@ class Game:
     def setVotes(self, votes):
         self.votes = votes
 
+    def setImprisoned(self, imprisoned):
+        self.imprisoned = imprisoned
+
     def remainingTurns(self):
         return self.getNumTurns() - self.getCurrentTurn()
     
@@ -182,6 +189,11 @@ class Game:
             accused = self.getMostAccused()
             self.setAccusations({})
 
+            # Release the last accused player
+            if self.getImprisoned() is not None:
+                self.getBoard().addAgent(self.getImprisoned().getPosition()[0], self.getImprisoned().getPosition()[1], self.getImprisoned())
+                self.setImprisoned(None)
+
             # Share information about the accused player's consumption
             consumption = {}
             for player in self.getPlayers():
@@ -201,8 +213,9 @@ class Game:
 
             print(f"YES: {yes_votes}, NO: {no_votes} (accused: {accused.getId()})")
             if yes_votes > no_votes:
-                print(f"{accused.getId()} was voted out.")
-                # TODO: remove player from game
+                # Imprison the accused player
+                print(f"{accused.getId()} was imprisoned.")
+                self.setImprisoned(accused)
 
             if self.remainingRounds() == 1:
                 self.setDone(True)
@@ -210,7 +223,8 @@ class Game:
                 self.nextRound()
         else:
             for player in self.getPlayers():
-                self.addTotalReward(player.act())
+                if self.getImprisoned() != player:
+                    self.addTotalReward(player.act())
 
             if self.remainingTurns() == 1:
                 if self.remainingRounds() == 1:
