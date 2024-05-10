@@ -21,6 +21,9 @@ class Agent:
 
     # Getters and setters
 
+    def getId(self):
+        return self.id
+
     def getEnv(self):
         return self.env
     
