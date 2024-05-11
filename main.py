@@ -23,6 +23,12 @@ class CellSprite:
 
     def getImage(self):
         return self.image
+    
+    def getWidth(self):
+        return self.image.get_width()
+    
+    def getHeight(self):
+        return self.image.get_height()
 
     def drawTo(self, surface, i, j):
         surface.blit(self.image, (i * self.cell_size + self.offset[0], j * self.cell_size + self.offset[1]))
@@ -64,7 +70,7 @@ if __name__ == "__main__":
     slime_sprites = [CellSprite.fromFile(cell_size, sprite_scale, f"assets/{name}") for name in slime_sprites]
 
     # Prepare agent sprites
-    font = pygame.font.SysFont(None, 20)
+    font = pygame.font.SysFont(None, cell_size)
     agent_sprites = {}
     for player in game.getPlayers():
         id_text = font.render(str(player.getId()), True, (0, 0, 0))
@@ -141,10 +147,11 @@ if __name__ == "__main__":
                     j = player.getId() % rows
                     position = ((box_position[0] + i * col_size * cell_size) / cell_size, (box_position[1] + j * row_size * cell_size) / cell_size + 1)
                     agent_sprites[player.getId()].drawTo(screen, position[0], position[1])
-                    agent_sprites[accused.getId()].drawTo(screen, position[0] + col_size - 1, position[1])
+                    agent_sprites[accused.getId()].drawTo(screen, position[0] + col_size - (agent_sprites[accused.getId()].getWidth() / cell_size), position[1])
 
                     # Draw text
-                    screen.blit(accusesText, ((position[0] + 1.5) * cell_size, position[1] * cell_size))
+                    text_x = (2 * position[0] + col_size) / 2  - (accusesText.get_width() / (cell_size * 2))
+                    screen.blit(accusesText, (text_x * cell_size, position[1] * cell_size))
             elif current_time < last_step_time + accusation_individual_time + accusation_ranking_time:
                 pass # TODO: show accusation ranking popup.
             else:
