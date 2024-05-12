@@ -65,10 +65,19 @@ class GreedyAgent(RandomWalker):
 
     def noTargetPosition(self):
         return self.getTargetPosition() is None
+    
+    def targetStillValid(self):
+        if not self.getBoard().hasResource(self.getTargetPosition()[0], 
+                                         self.getTargetPosition()[1]):
+            self.setTargetPosition(None)
+            self.setPlan([])
+            return False
+        return True
 
     def act(self):
         self.perceive(self.getEnv())
         consume_apple = False
+        self.targetStillValid()
 
         if self.noTargetPosition() :
             self.setPlan(self.pathToClosestApple())
