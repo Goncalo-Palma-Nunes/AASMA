@@ -16,7 +16,6 @@ class RandomWalker(Agent):
                 possible_directions.remove(direction)
                 direction = None
 
-    
     def act(self):
         self.eat()
         self.moveInRandomDirection()

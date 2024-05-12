@@ -1,10 +1,12 @@
 from agents import Agent, UP, DOWN, LEFT, RIGHT
+from random_walker import RandomWalker
+import random
 
 #######################
 ###     Class       ###
 #######################
 
-class GreedyAgent(Agent):
+class GreedyAgent(RandomWalker):
 
     ###########################
     ###       Attributes    ###
@@ -18,7 +20,7 @@ class GreedyAgent(Agent):
     ###########################
 
     def __init__(self, env, endowment, utility_function=lambda x: 1):
-        Agent.__init__(self, env, endowment, utility_function)
+        RandomWalker.__init__(self, env, endowment, utility_function)
 
     ###########################
     ### Getters and setters ###
@@ -70,6 +72,11 @@ class GreedyAgent(Agent):
 
         if self.noTargetPosition() :
             self.setPlan(self.pathToClosestApple())
+            if self.getPlan() == []:
+                self.moveInRandomDirection()
+                self.communicate(apple_consumed=consume_apple)
+                return
+
             self.setTargetPosition(self.getTargetFromPlan())
 
         self.popPlan()
