@@ -70,7 +70,7 @@ if __name__ == "__main__":
     slime_sprites = [CellSprite.fromFile(cell_size, sprite_scale, f"assets/{name}") for name in slime_sprites]
 
     # Prepare agent sprites
-    font = pygame.font.SysFont(None, cell_size)
+    font = pygame.font.SysFont("arialblack", cell_size //2)
     agent_sprites = {}
     for player in game.getPlayers():
         id_text = font.render(str(player.getId()), True, (0, 0, 0))
@@ -127,7 +127,9 @@ if __name__ == "__main__":
                 row_size = 2
                 col_size = 5
 
+                new_font = pygame.font.SysFont("arialblack", cell_size)
                 accusesText = font.render("accuses", True, (0, 0, 0))
+                accusationText = new_font.render("Accusation List", True, (0,0,0))
 
                 max_rows = board_size / row_size - margin
 
@@ -137,21 +139,35 @@ if __name__ == "__main__":
                 center = (board_size * cell_size / 2, board_size * cell_size / 2)
                 box_size = (cols * col_size * cell_size, rows * row_size * cell_size)
                 box_position = (center[0] - box_size[0] / 2, center[1] - box_size[1] / 2)
+                
+                box_size_background = (cols * col_size * cell_size + (row_size * cell_size /3), rows * row_size * cell_size + row_size * cell_size)
+                box_position_background = (center[0] - box_size_background[0] / 2, center[1] - box_size_background[1] / 2 - (row_size * cell_size / 3))
 
                 # Draw popup background
-                pygame.draw.rect(screen, (100, 200, 100), (box_position, box_size))
+                pygame.draw.rect(screen, (161, 102, 47), (box_position_background, box_size_background))
+                pygame.draw.rect(screen, (216, 181, 137), (box_position, box_size))
+                
+                
+                screen.blit(accusationText, (box_position[0], box_position_background[1] + row_size * cell_size/ 6))
 
                 for player, accused in game.getAccusations().items():
-                    # Draw player and accused sprites
                     i = player.getId() // rows
                     j = player.getId() % rows
                     position = ((box_position[0] + i * col_size * cell_size) / cell_size, (box_position[1] + j * row_size * cell_size) / cell_size + 1)
+                    
+                    # Draw accusation boxes
+                    accusation_box_size = (col_size * cell_size, row_size * cell_size)
+                    accusation_box_position = (box_position[0] + i * col_size * cell_size, box_position[1] + j * row_size * cell_size)
+                    pygame.draw.rect(screen, (161, 102, 47), (accusation_box_position, accusation_box_size), 1)
+                    
+                    # Draw player and accused sprites
                     agent_sprites[player.getId()].drawTo(screen, position[0], position[1])
                     agent_sprites[accused.getId()].drawTo(screen, position[0] + col_size - (agent_sprites[accused.getId()].getWidth() / cell_size), position[1])
 
                     # Draw text
                     text_x = (2 * position[0] + col_size) / 2  - (accusesText.get_width() / (cell_size * 2))
                     screen.blit(accusesText, (text_x * cell_size, position[1] * cell_size))
+                    
             elif current_time < last_step_time + accusation_individual_time + accusation_ranking_time:
                 pass # TODO: show accusation ranking popup.
             else:
