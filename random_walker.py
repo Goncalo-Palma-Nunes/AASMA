@@ -4,10 +4,8 @@ import random
 class RandomWalker(Agent):
     def __init__(self, env, endowment, utility_function=lambda x: 0):
         Agent.__init__(self, env, endowment, utility_function)
-    
-    def act(self):
-        self.eat()
-        
+
+    def moveInRandomDirection(self):
         possible_directions = [UP, DOWN, LEFT, RIGHT]
         direction = None
         while not (len(possible_directions) == 0) and direction is None:
@@ -17,9 +15,12 @@ class RandomWalker(Agent):
             except ValueError:
                 possible_directions.remove(direction)
                 direction = None
-            
-        return 0
 
+    
+    def act(self):
+        self.eat()
+        self.moveInRandomDirection()
+            
     def accuse(self):
         return random.choice(self.getOtherPlayers())
 
