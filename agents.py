@@ -36,6 +36,7 @@ class Agent:
                   other_players=[], timestamp=0):
         self.setTimeStamp(timestamp)
         self.setEnv(env)
+        self.setBoard(deep_copy=True)
         self.setEndowment(endowment)
         self.setUtilityFunction(utility_function)
         self.id = next(self.id)
@@ -83,6 +84,9 @@ class Agent:
     def getPlayerResources(self, id):
         return self.getOtherPlayers()[id][1]
     
+    def getBoard(self):
+        return self.board
+    
     def utilityFunction(self):
         return self.utility_function
     
@@ -96,6 +100,12 @@ class Agent:
 
     def setEndowment(self, endowment):
         self.endowment = endowment
+
+    def setBoard(self, deep_copy=True):
+        if deep_copy:
+            self.board = self.getEnv().deepCopy()
+        else:
+            self.board = self.getEnv()
 
     def setUtilityFunction(self, utility_function):
         if not callable(utility_function):

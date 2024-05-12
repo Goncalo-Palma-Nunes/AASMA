@@ -111,6 +111,17 @@ class Board:
 
     # Class Methods
 
+    def deepCopy(self):
+        copy = Board(self.getBoardSize(), self.getResourceFrequency(),
+                      self.getResourceGrowthFrequency(), self.getTimestamp())
+        
+        for i in range(self.getBoardSize()):
+            for j in range(self.getBoardSize()):
+                cell = self.getCell(i, j)
+                copy.setCell(i, j, self.Cell(cell.getResource(), cell.getAgent(), cell.getTimestamp()))
+
+        return copy
+
     def incrementTimestamp(self):
         self.setTimestamp(self.getTimestamp() + 1)
 
