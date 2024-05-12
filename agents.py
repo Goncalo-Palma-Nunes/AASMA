@@ -12,6 +12,7 @@ LEFT = "left"
 RIGHT = "right"
 SUCCESS = 1
 FAILURE = 0
+SIGHT_RADIUS = 4
 
 
 #######################
@@ -132,7 +133,8 @@ class Agent:
         self.getOtherPlayers()[id][2] += 1
 
     ###########################
-    ###       Methods       ###
+    ###     Environment     ###
+    ### Interaction Methods ###
     ###########################
 
     def onResource(self):
@@ -176,11 +178,16 @@ class Agent:
     def perceive(self, real_board : Board):
         i, j = self.getPosition()
 
-        for k in range(i - 4, i + 5): # Perceive a square of size 4
-            for l in range(j - 4, j + 5): # with center at agent's position
+        for k in range(i - SIGHT_RADIUS, i + SIGHT_RADIUS + 1): # Perceive a square of size SIGHT_RADIUS
+            for l in range(j - SIGHT_RADIUS, j + SIGHT_RADIUS + 1): # with center at agent's position
                 if self.getEnv().validPosition(k, l): # If within board
                     # Update with perceived information
                     self.getEnv().setCell(k, l, real_board.getCell(k, l))
+
+    ############################
+    ###    Communication     ###
+    ###       Methods        ###
+    ############################
 
     def withinRange(self, other_agent):
         return abs(self.getPosition()[0] - other_agent.getPosition()[0]) <= 4 and \
