@@ -80,6 +80,9 @@ class Board:
             output = str(self.getTimestamp()) + ")"
             return output
         
+    def manhattanDistance(self, i1, j1, i2, j2):
+        return abs(i1 - i2) + abs(j1 - j2)
+        
     # Class Getters/Setters
 
     def getBoardSize(self):
