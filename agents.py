@@ -184,25 +184,8 @@ class Agent:
                     # Update with perceived information
                     self.getEnv().setCell(k, l, real_board.getCell(k, l))
 
-    def closestApple(self):
-        i, j = self.getPosition()
-
-        closest = None
-        closest_distance = float('inf')
-        size = self.getEnv().getBoardSize()
-        # Iterate over the board
-        for x in range(size):
-            for y in range(size):
-                # Check if the cell has a resource
-                if self.getEnv().getCell(x, y).hasResource():
-                    # Calculate the distance between the agent and the cell
-                    distance = self.getEnv().manhattanDistance(i, j, x, y)
-                    # If the distance is less than the closest distance, update the closest cell
-                    if distance < closest_distance:
-                        closest = (x, y)
-                        closest_distance = distance
-
-        return closest
+    def pathToClosestApple(self):
+        return self.getEnv().shortestPath(self.getPosition())
 
     ############################
     ###    Communication     ###
