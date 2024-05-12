@@ -47,7 +47,7 @@ class GreedyAgent(Agent):
             raise ValueError("Plan must be a list.")
         self.plan = plan
 
-    def topPlan(self):
+    def nextMove(self):
         return self.getPlan()[0]
     
     def getTargetFromPlan(self):
@@ -55,6 +55,7 @@ class GreedyAgent(Agent):
 
     def popPlan(self):
         return self.getPlan().pop(0)
+    
     
     ###########################
     ###     Methods         ###
@@ -65,13 +66,20 @@ class GreedyAgent(Agent):
 
     def act(self):
         self.perceive(self.getEnv())
+        consume_apple = False
 
         if self.noTargetPosition() :
             self.setPlan(self.pathToClosestApple())
             self.setTargetPosition(self.getTargetFromPlan())
 
+        self.popPlan()
+        if self.getPlan() == []:
+            self.setTargetPosition(None)
+            consume_apple = bool(self.eat())
+        else:
+            self.move(self.positionToDirection(self.nextMove()))
 
-        raise NotImplementedError
+        self.communicate(apple_consumed=consume_apple)
 
     def accuse(self):
         raise NotImplementedError

@@ -186,6 +186,20 @@ class Agent:
 
     def pathToClosestApple(self):
         return self.getEnv().shortestPath(self.getPosition())
+    
+
+    # convert position to direction
+    def positionToDirection(self, position):
+        if position[0] < self.getPosition()[0]:
+            return UP
+        elif position[0] > self.getPosition()[0]:
+            return DOWN
+        elif position[1] < self.getPosition()[1]:
+            return LEFT
+        elif position[1] > self.getPosition()[1]:
+            return RIGHT
+        else:
+            raise ValueError("Position must be different from current position.")
 
     ############################
     ###    Communication     ###
