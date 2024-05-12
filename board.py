@@ -212,6 +212,49 @@ class Board:
         agent = self.removeAgent(old_i, old_j)
         self.addAgent(new_i, new_j, agent)
 
+
+    # Compute the shortest path from (i1, j1) to (i2, j2), using a
+    # breadth-first search algorithm. If a cell contains an agent, it
+    # is considered an obstacle. The algorithm should also build a list
+    # of the cells that form the path.
+    def shortestPath(self, i1, j1, i2, j2):
+        if not self.validPosition(i1, j1) or not self.validPosition(i2, j2):
+            raise ValueError("Invalid position.")
+        if not self.noAgent(i1, j1) or not self.noAgent(i2, j2):
+            raise ValueError("Neither of the starting positions has an agent.")
+        
+        # Initialize the queue with the starting cell
+        queue = [(i1, j1)]
+        # Initialize the visited set with the starting cell
+        visited = set([(i1, j1)])
+        # Initialize the dictionary of parents
+        parents = {}
+        # Initialize the path list
+        path = []
+        
+        # While the queue is not empty
+        while len(queue) > 0:
+            # Dequeue the current cell
+            i, j = queue.pop(0)
+            # If the current cell is the target cell
+            if i == i2 and j == j2:
+                # Reconstruct the path
+                while (i, j) != (i1, j1):
+                    path.insert(0, (i, j))
+                    i, j = parents[(i, j)]
+                path.insert(0, (i, j))
+                return path
+            # Otherwise
+            else:
+                # Enqueue the neighbors of the current cell
+                for (k, l) in [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)]:
+                    if self.validPosition(k, l) and self.noAgent(k, l) and (k, l) not in visited:
+                        queue.append((k, l))
+                        visited.add((k, l))
+                        parents[(k, l)] = (i, j)
+        
+        return path
+
     def __str__(self):
         return "Board Size: " + str(self.getBoardSize()) + "\n" + \
                "Resource Frequency: " + str(self.getResourceFrequency()) + "\n" + \
