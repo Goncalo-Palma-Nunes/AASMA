@@ -2,6 +2,10 @@ import abc
 from board import Board
 import itertools
 
+#######################
+###    Constants    ###
+#######################
+
 UP = "up"
 DOWN = "down"
 LEFT = "left"
@@ -9,9 +13,23 @@ RIGHT = "right"
 SUCCESS = 1
 FAILURE = 0
 
+
+#######################
+###     Class       ###
+#######################
+
 class Agent:
+
+    ###########################
+    ###       Attributes    ###
+    ###########################
+
     __metaclass__ = abc.ABCMeta
     id = itertools.count()
+
+    ###########################
+    ###     Constructor     ###
+    ###########################
     
     def __init__(self, env : Board, endowment, utility_function, position=None,
                   other_players=[], timestamp=0):
@@ -24,7 +42,9 @@ class Agent:
         self.setOtherPlayers(other_players)
         self.position = position
 
-    # Getters and setters
+    ###########################
+    ### Getters and setters ###
+    ###########################
 
     def getId(self):
         return self.id
@@ -111,7 +131,9 @@ class Agent:
     def incrementOtherPlayerTimeStamp(self, id):
         self.getOtherPlayers()[id][2] += 1
 
-    # Methods
+    ###########################
+    ###       Methods       ###
+    ###########################
 
     def onResource(self):
         return self.getEnv().hasResource(self.getPosition()[0], self.getPosition()[1])
@@ -175,12 +197,6 @@ class Agent:
                     self.getEnv().setCell(i, j, new_board_cell)
 
     def processPlayerInfo(self, other_players : dict):
-        pass 
-
-    
-    def receiveMessage(self, message : Board, other_players : dict):
-        self.processNewBoard(message)
-
         for key, value in other_players.items():
             received_timestamp = value[2]
             received_resources = value[1]
@@ -193,11 +209,20 @@ class Agent:
                 self.updateOtherPlayerResources(key, received_resources)
                 self.updateOtherPlayerTimeStamp(key, received_timestamp)
 
+    
+    def receiveMessage(self, message : Board, other_players : dict, id : int, apple_consumed : bool = False):
+        self.processNewBoard(message)
+        self.processPlayerInfo(other_players)
 
-    def message(self, other_agent):
-        other_agent.receiveMessage(self.getEnv(), self.getOtherPlayers())
+        if apple_consumed:
+            self.incrementOtherPlayerTimeStamp(id)
 
-    def communicate(self):
+
+    def message(self, other_agent, apple_consumed : bool = False):
+        other_agent.receiveMessage(self.getEnv(), self.getOtherPlayers(),
+                                   self.getId(), apple_consumed)
+
+    def communicate(self, apple_consumed : bool):
         for value in self.getOtherPlayers().values():
             player = value[0]
             if self.withinRange(player):
@@ -206,7 +231,11 @@ class Agent:
     def disclose_consumption(self, accused):
         return {} # TODO
 
-    # Abstract methods
+    ############################
+    ###        Abstract      ###
+    ###        Methods       ###
+    ############################
+
 
     @abc.abstractmethod
     def act(self):
@@ -223,6 +252,11 @@ class Agent:
     @abc.abstractmethod
     def update(self, state, action, reward, next_state):
         pass
+
+
+    ############################
+    ###      Magic Methods   ###
+    ############################
 
     def __str__(self):
         return "Agent: " + str(self.__class__) + "\n" + \
