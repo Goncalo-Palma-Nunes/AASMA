@@ -148,7 +148,7 @@ class Agent:
     ###########################
 
     def onResource(self):
-        return self.getEnv().hasResource(self.getPosition()[0], self.getPosition()[1])
+        return self.getBoard().hasResource(self.getPosition()[0], self.getPosition()[1])
     
     def __validateMove(self, direction):
         new_position = self.getPosition()
@@ -174,6 +174,7 @@ class Agent:
         if self.onResource():
             self.setEndowment(self.getEndowment() + 1)
             self.getEnv().removeResource(self.getPosition()[0], self.getPosition()[1])
+            self.getBoard().removeResource(self.getPosition()[0], self.getPosition()[1])
             return SUCCESS
         return FAILURE
     
@@ -181,6 +182,7 @@ class Agent:
         new_position = self.__validateMove(direction)
         
         self.getEnv().moveAgent(self.getPosition()[0], self.getPosition()[1], new_position[0], new_position[1])
+        self.getBoard().moveAgent(self.getPosition()[0], self.getPosition()[1], new_position[0], new_position[1])
         self.setPosition(new_position)
 
         return new_position
@@ -192,10 +194,10 @@ class Agent:
             for l in range(j - SIGHT_RADIUS, j + SIGHT_RADIUS + 1): # with center at agent's position
                 if self.getEnv().validPosition(k, l): # If within board
                     # Update with perceived information
-                    self.getEnv().setCell(k, l, real_board.getCell(k, l))
+                    self.getBoard().setCell(k, l, real_board.getCell(k, l))
 
     def pathToClosestApple(self):
-        return self.getEnv().shortestPath(self.getPosition())
+        return self.getBoard().shortestPath(self.getPosition())
     
 
     # convert position to direction
@@ -224,11 +226,11 @@ class Agent:
         size = new_board.getBoardSize()
         for i in range(size):
             for j in range(size):
-                current_cell = self.getEnv().getCell(i, j)
+                current_cell = self.getBoard().getCell(i, j)
                 new_board_cell = new_board.getCell(i, j)
 
                 if current_cell.isOlder(new_board_cell):
-                    self.getEnv().setCell(i, j, new_board_cell)
+                    self.getBoard().setCell(i, j, new_board_cell)
 
     def processPlayerInfo(self, other_players : dict):
         for key, value in other_players.items():
