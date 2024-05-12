@@ -213,47 +213,73 @@ class Board:
         self.addAgent(new_i, new_j, agent)
 
 
-    # Compute the shortest path from (i1, j1) to (i2, j2), using a
-    # breadth-first search algorithm. If a cell contains an agent, it
-    # is considered an obstacle. The algorithm should also build a list
-    # of the cells that form the path.
-    def shortestPath(self, i1, j1, i2, j2):
-        if not self.validPosition(i1, j1) or not self.validPosition(i2, j2):
-            raise ValueError("Invalid position.")
-        if not self.noAgent(i1, j1) or not self.noAgent(i2, j2):
-            raise ValueError("Neither of the starting positions has an agent.")
-        
+    # Compute the shortest path from (i1, j1) to another cell, 
+    # with an apple using a, breadth-first search algorithm.
+    # If a cell contains an agent, it is considered an obstacle. 
+    # The algorithm should also build a list of the cells that form the path.
+    def shortestPath(self, i1, j1):
         # Initialize the queue with the starting cell
         queue = [(i1, j1)]
-        # Initialize the visited set with the starting cell
-        visited = set([(i1, j1)])
-        # Initialize the dictionary of parents
-        parents = {}
-        # Initialize the path list
+        # Initialize the dictionary that will store the parent of each cell
+        parent = {(i1, j1): None}
+        # Initialize the list that will store the path
         path = []
-        
+        # Initialize the list that will store the cells that have been visited
+        visited = []
         # While the queue is not empty
-        while len(queue) > 0:
-            # Dequeue the current cell
+        while queue:
+            # Dequeue the first cell in the queue
             i, j = queue.pop(0)
-            # If the current cell is the target cell
-            if i == i2 and j == j2:
-                # Reconstruct the path
-                while (i, j) != (i1, j1):
-                    path.insert(0, (i, j))
-                    i, j = parents[(i, j)]
-                path.insert(0, (i, j))
+            # If the cell contains an apple
+            if self.hasResource(i, j):
+                # Initialize the current cell
+                current = (i, j)
+                # While the current cell is not the starting cell
+                while current:
+                    # Add the current cell to the path to start of the path
+                    path.insert(0, current)
+                    # Update the current cell to the parent of the current cell
+                    current = parent[current]
+                # Return the path
                 return path
-            # Otherwise
-            else:
-                # Enqueue the neighbors of the current cell
-                for (k, l) in [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)]:
-                    if self.validPosition(k, l) and self.noAgent(k, l) and (k, l) not in visited:
-                        queue.append((k, l))
-                        visited.add((k, l))
-                        parents[(k, l)] = (i, j)
-        
-        return path
+            # If the cell has not been visited
+            if (i, j) not in visited:
+                # Mark the cell as visited
+                visited.append((i, j))
+                # If the cell to the left is valid
+                if self.validPosition(i - 1, j):
+                    # If the cell to the left is not an obstacle
+                    if self.noAgent(i - 1, j):
+                        # Enqueue the cell to the left
+                        queue.append((i - 1, j))
+                        # Set the parent of the cell to the left to the current cell
+                        parent[(i - 1, j)] = (i, j)
+                # If the cell to the right is valid
+                if self.validPosition(i + 1, j):
+                    # If the cell to the right is not an obstacle
+                    if self.noAgent(i + 1, j):
+                        # Enqueue the cell to the right
+                        queue.append((i + 1, j))
+                        # Set the parent of the cell to the right to the current cell
+                        parent[(i + 1, j)] = (i, j)
+                # If the cell above is valid
+                if self.validPosition(i, j - 1):
+                    # If the cell above is not an obstacle
+                    if self.noAgent(i, j - 1):
+                        # Enqueue the cell above
+                        queue.append((i, j - 1))
+                        # Set the parent of the cell above to the current cell
+                        parent[(i, j - 1)] = (i, j)
+                # If the cell below is valid
+                if self.validPosition(i, j + 1):
+                    # If the cell below is not an obstacle
+                    if self.noAgent(i, j + 1):
+                        # Enqueue the cell below
+                        queue.append((i, j + 1))
+                        # Set the parent of the cell below to the current cell
+                        parent[(i, j + 1)] = (i, j)
+        # If no path is found, return an empty list
+        return []
 
     def __str__(self):
         return "Board Size: " + str(self.getBoardSize()) + "\n" + \
