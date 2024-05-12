@@ -263,4 +263,10 @@ class Agent:
                 "id: " + str(self.id) + "\n" + \
                "Endowment: " + str(self.endowment) + "\n" + \
                "Utility Function: " + str(self.utility_function) + "\n"
+    
+    def __eq__(self, other):
+        if not isinstance(other, Agent):
+            return False
+
+        return self.getId() == other.getId()
             
