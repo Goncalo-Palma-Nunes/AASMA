@@ -6,6 +6,8 @@ RESOURCE = 1
 
 class Board:
 
+    num_apples = 0
+
     # Class Constructor
     def __init__(self, board_size, resource_frequency=.1, resource_growth_frequency=.5, timestamp=0):
         self.setBoardSize(board_size)
@@ -91,6 +93,9 @@ class Board:
     def getBoard(self):
         return self.board
     
+    def getNumApples(self):
+        return self.num_apples
+    
     def getResourceFrequency(self):
         return self.resource_frequency
 
@@ -109,11 +114,22 @@ class Board:
     def setTimestamp(self, timestamp):
         self.timestamp = timestamp
 
+    def setNumApples(self, num_apples):
+        self.num_apples = num_apples
+
+    def incrementNumApples(self):
+        self.num_apples = self.getNumApples() + 1
+    
+    def decrementNumApples(self):
+        self.num_apples = self.getNumApples() - 1
+
     # Class Methods
 
     def deepCopy(self):
         copy = Board(self.getBoardSize(), self.getResourceFrequency(),
                       self.getResourceGrowthFrequency(), self.getTimestamp())
+        
+        copy.setNumApples(self.getNumApples())
         
         for i in range(self.getBoardSize()):
             for j in range(self.getBoardSize()):
@@ -157,9 +173,11 @@ class Board:
 
     def addResource(self, i, j):
         self.getCell(i, j).addResource()
+        self.incrementNumApples()
 
     def removeResource(self, i, j):
         self.getCell(i, j).removeResource()
+        self.decrementNumApples()
     
     def setBoardSize(self, board_size):
         if not isinstance(board_size, int):
