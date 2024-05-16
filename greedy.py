@@ -1,6 +1,5 @@
 from agents import Agent, UP, DOWN, LEFT, RIGHT
 from random_walker import RandomWalker
-import random
 
 #######################
 ###     Class       ###
