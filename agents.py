@@ -119,6 +119,7 @@ class Agent:
         if any (i > self.getEnv().getBoardSize() for i in position):
             raise ValueError("Position must be within the bounds of the board.")
         self.position = position
+        self.getBoard().addAgent(position[0], position[1], self)
 
     def setOtherPlayers(self, other_players):
         if not isinstance(other_players, (list, tuple)):
@@ -148,6 +149,8 @@ class Agent:
     ###########################
 
     def onResource(self):
+        # self.getBoard().printBoard()
+        # exit(0)
         return self.getBoard().hasResource(self.getPosition()[0], self.getPosition()[1])
     
     def __validateMove(self, direction):
@@ -161,17 +164,22 @@ class Agent:
         elif direction == RIGHT:
             new_position = (self.getPosition()[0], self.getPosition()[1] + 1)
         else:
+            # print("Invalid direction.")
             raise ValueError("Invalid direction. Must be 'up', 'down', 'left', or 'right'.")
         
         if not self.getEnv().validPosition(new_position[0], new_position[1]):
+            # print("Cannot move out of bounds.")
             raise ValueError("Cannot move out of bounds.")
         if not self.getEnv().noAgent(new_position[0], new_position[1]):
+            # print("Cannot move to a position with another agent.")
             raise ValueError("Cannot move to a position with another agent.")
         
+        # print("SUCCESS")
         return new_position
 
     def eat(self):
         if self.onResource():
+            # print("EATING EATING EATING YUM YUM YUM")
             self.setEndowment(self.getEndowment() + 1)
             self.getEnv().removeResource(self.getPosition()[0], self.getPosition()[1])
             self.getBoard().removeResource(self.getPosition()[0], self.getPosition()[1])
@@ -181,9 +189,24 @@ class Agent:
     def move(self, direction):
         new_position = self.__validateMove(direction)
         
+        # print("Moving from", self.getPosition(), "to", new_position)
+        # print("Env has agent = ", not self.getEnv().noAgent(self.getPosition()[0], self.getPosition()[1]))
+        # print("Board has agent = ", not self.getBoard().noAgent(self.getPosition()[0], self.getPosition()[1]))
         self.getEnv().moveAgent(self.getPosition()[0], self.getPosition()[1], new_position[0], new_position[1])
+
+        # print("Env has agent in old position = ", not self.getEnv().noAgent(self.getPosition()[0], self.getPosition()[1]))
+        # print("Board has agent in old position  = ", not self.getBoard().noAgent(self.getPosition()[0], self.getPosition()[1]))
+        # print("Env has agent in new position = ", not self.getEnv().noAgent(new_position[0], new_position[1]))
+        # print("Board has agent in new position  = ", not self.getBoard().noAgent(new_position[0], new_position[1]))
+        # exit(0)
+
         self.getBoard().moveAgent(self.getPosition()[0], self.getPosition()[1], new_position[0], new_position[1])
+        # print("Board has agent = ", not self.getBoard().noAgent(self.getPosition()[0], self.getPosition()[1]))
+        
+        # print("Moved from", self.getPosition(), "to", new_position)
         self.setPosition(new_position)
+        # print("Moved to", self.getPosition())
+        # exit(0)
 
         return new_position
     
@@ -319,4 +342,8 @@ class Agent:
             return False
 
         return self.getId() == other.getId()
+    
+
+    def __hash__(self):
+        return hash(self.getId())
             

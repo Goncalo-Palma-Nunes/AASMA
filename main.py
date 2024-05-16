@@ -52,11 +52,15 @@ if __name__ == "__main__":
 
     # Initialize board and game
     board = Board(board_size, resource_frequency, resource_growth_frequency)
-    board.generateResources()
     players = [RandomWalker(board, 0, lambda x: 0) for i in range(player_count)]
     for i in range(player_count):
         players[i].setOtherPlayers(players[:i] + players[i+1:])
+
+    board.generateResources()
+    
     game = Game(board, players, num_rounds, num_turns)
+    for i in range(player_count):
+        players[i].setBoard(deep_copy=True) # Deep copy the board for each player
 
     # Setup pygame
     pygame.init()
@@ -86,6 +90,7 @@ if __name__ == "__main__":
 
     running = True
     last_step_time = pygame.time.get_ticks()
+    step = 0
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -103,6 +108,8 @@ if __name__ == "__main__":
                 # If enough time has passed, advance a turn
                 if current_time >= last_step_time + turn_time:
                     last_step_time = current_time
+                    print("step", step)
+                    step += 1
                     game.step()
 
                 # Draw the board

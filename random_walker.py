@@ -10,14 +10,25 @@ class RandomWalker(Agent):
         direction = None
         while not (len(possible_directions) == 0) and direction is None:
             direction = random.choice(possible_directions)
+            # print("direction is", direction)
             try:
+                # print("MOVING")
                 self.move(direction)
-            except ValueError:
+                # print("MOVED", direction)
+            except ValueError as e:
+                # print(e)
+                # print("ERROR")
                 possible_directions.remove(direction)
                 direction = None
 
     def act(self):
-        return self.eat() if self.eat() == SUCCESS else (self.moveInRandomDirection() or FAILURE)
+        # print("Acting")
+        result = self.eat()
+        if result != SUCCESS:
+            self.moveInRandomDirection()
+            result = FAILURE
+        
+        return result
             
     def accuse(self):
         return random.choice(self.getOtherPlayers())

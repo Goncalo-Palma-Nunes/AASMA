@@ -46,6 +46,9 @@ class Board:
 
         # Inner Class Methods
 
+        def deepCopy(self):
+            return self.__class__(self.getResource(), self.getAgent(), self.getTimestamp())
+
         def noResource(self):
             return self.getResource() == EMPTY
         
@@ -79,7 +82,7 @@ class Board:
                 output += "No Agent; "
             else:
                 output += "Agent; "
-            output = str(self.getTimestamp()) + ")"
+            output += str(self.getTimestamp()) + ")"
             return output
         
     def manhattanDistance(self, i1, j1, i2, j2):
@@ -109,7 +112,7 @@ class Board:
         return self.timestamp
     
     def setCell(self, i, j, cell):
-        self.board[i][j] = cell
+        self.board[i][j] = self.Cell.deepCopy(cell)
 
     def setTimestamp(self, timestamp):
         self.timestamp = timestamp

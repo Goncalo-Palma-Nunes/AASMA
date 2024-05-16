@@ -222,10 +222,14 @@ class Game:
                 self.setDone(True)
             else:
                 self.nextRound()
-        else:
+        else: # Normal turn
+            # print(f"Round {self.getCurrentRound()}, Turn {self.getCurrentTurn()}")
+            # print("aaaaaa")
             for player in self.getPlayers():
-                if self.getImprisoned() != player:
+                if self.getImprisoned() != player: # Skip imprisoned player
+                    # print("bbbbbb")
                     self.addTotalReward(player.act())
+            # exit(0)
 
             if self.remainingTurns() == 1:
                 if self.remainingRounds() == 1:
