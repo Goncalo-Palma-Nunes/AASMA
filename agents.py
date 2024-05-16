@@ -197,9 +197,23 @@ class Agent:
                     self.getBoard().setCell(k, l, real_board.getCell(k, l))
 
     def pathToClosestApple(self):
+        """Considers the entire environment"""
         return self.getBoard().shortestPath(self.getPosition())
     
+    def closestAppleInRadius(self):
+        """Considers only the agent's sight radius"""
+        i, j = self.getPosition()
+        cell = None
+        cell_distance = float('inf')
+        for k in range(i - SIGHT_RADIUS, i + SIGHT_RADIUS + 1):
+            for l in range(j - SIGHT_RADIUS, j + SIGHT_RADIUS + 1):
+                if self.getBoard().hasResource(k, l) and \
+                    self.getBoard().manhattanDistance((i, j), (k, l)) < cell_distance:
+                    cell = (k, l)
+                    cell_distance = self.getBoard().manhattanDistance((i, j), (k, l))
 
+        return cell
+    
     # convert position to direction
     def positionToDirection(self, position):
         if position[0] < self.getPosition()[0]:

@@ -223,6 +223,36 @@ class Board:
         agent = self.removeAgent(old_i, old_j)
         self.addAgent(new_i, new_j, agent)
 
+    # Shortest path between two points (return a plan)
+    def shortestPath(self, i1, j1, i2, j2):
+        queue = [(i1, j1)]
+        parent = {(i1, j1): None}
+        path = []
+        visited = []
+        while queue:
+            i, j = queue.pop(0)
+            if i == i2 and j == j2:
+                current = (i, j)
+                while current:
+                    path.insert(0, current)
+                    current = parent[current]
+                return path
+            if (i, j) not in visited:
+                visited.append((i, j))
+                if self.validPosition(i - 1, j) and self.noAgent(i - 1, j):
+                    queue.append((i - 1, j))
+                    parent[(i - 1, j)] = (i, j)
+                if self.validPosition(i + 1, j) and self.noAgent(i + 1, j):
+                    queue.append((i + 1, j))
+                    parent[(i + 1, j)] = (i, j)
+                if self.validPosition(i, j - 1) and self.noAgent(i, j - 1):
+                    queue.append((i, j - 1))
+                    parent[(i, j - 1)] = (i, j)
+                if self.validPosition(i, j + 1) and self.noAgent(i, j + 1):
+                    queue.append((i, j + 1))
+                    parent[(i, j + 1)] = (i, j)
+        return []
+
 
     # Compute the shortest path from (i1, j1) to another cell, 
     # with an apple using a, breadth-first search algorithm.
