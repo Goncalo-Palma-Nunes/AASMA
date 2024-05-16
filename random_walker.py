@@ -1,4 +1,4 @@
-from agents import Agent, UP, DOWN, LEFT, RIGHT
+from agents import Agent, UP, DOWN, LEFT, RIGHT, SUCCESS, FAILURE
 import random
 
 class RandomWalker(Agent):
@@ -17,8 +17,7 @@ class RandomWalker(Agent):
                 direction = None
 
     def act(self):
-        self.eat()
-        self.moveInRandomDirection()
+        return self.eat() if self.eat() == SUCCESS else (self.moveInRandomDirection() or FAILURE)
             
     def accuse(self):
         return random.choice(self.getOtherPlayers())
