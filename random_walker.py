@@ -31,7 +31,7 @@ class RandomWalker(Agent):
         return result
             
     def accuse(self):
-        return random.choice(self.getOtherPlayers())
+        return random.choice(list(self.getOtherPlayers().values()))[0]
 
     def vote(self, consumption, accused):
         return random.choice([True, False])
