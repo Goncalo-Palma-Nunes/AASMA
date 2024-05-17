@@ -64,26 +64,26 @@ class UI:
         self.font = font
         
     def setAppleSprite(self, cell_size, sprite_scale):
-        self.apple_sprite = CellSprite.fromFile(cell_size, sprite_scale, "../assets/apple.png")
+        self.apple_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/apple.png")
         
     def getAppleSprite(self):
         return self.apple_sprite
     
     def setGrassSprite(self, cell_size, sprite_scale):
-        self.grass_sprite = CellSprite.fromFile(cell_size, sprite_scale, "../assets/grass.png")
+        self.grass_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/grass.png")
         
     def getGrassSprite(self):    
         return self.grass_sprite
 
     def setJailSprite(self, cell_size, sprite_scale):
-        self.jail_sprite = CellSprite.fromFile(cell_size, sprite_scale, "../assets/jail.png")
+        self.jail_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/jail.png")
     
     def getJailSprite(self):    
         return self.jail_sprite
     
     def setSlimeSprites(self, cell_size, sprite_scale):
         slime_sprites = ["slime_bluegreen.png", "slime_gold.png", "slime_pink.png", "slime_purple.png"]
-        self.slime_sprites = [CellSprite.fromFile(cell_size, sprite_scale, f"../assets/{name}") for name in slime_sprites]
+        self.slime_sprites = [CellSprite.fromFile(cell_size, sprite_scale, f"assets/{name}") for name in slime_sprites]
     
     def getSlimeSprites(self):   
         return self.slime_sprites
