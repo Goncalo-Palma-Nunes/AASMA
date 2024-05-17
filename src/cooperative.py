@@ -17,10 +17,54 @@ class CooperativeAgent(DeliberativeAgent):
         sustainable_consumption = sustainable_consumption / (2 * num_players)
 
         return sustainable_consumption
+
+    def getSustainableConsumption(self):
+        return self.sustainable_consumption
+    
+    def setSustainableConsumption(self, consumption):
+        self.sustainable_consumption = consumption
+
+    def moveTowardsApple(self):
+        consume_apple = 0
+        self.targetStillValid()
+        if self.noTargetPosition() : # No current target/plan
+            self.setPlan(self.pathToClosestApple())
+            if self.getPlan() == []:
+                # If no apples are reachable, move in a random direction
+                self.moveInRandomDirection()
+                self.communicate(apple_consumed=bool(consume_apple))
+                return consume_apple
+
+            self.setTargetPosition(self.getTargetFromPlan())
+        else:
+            # Look for a closer apple in the vicinity
+            possible_new_target = self.closestAppleInRadius()
+            if possible_new_target is not None:
+                # If one exists, it is the closest apple and should be the target
+                i, j = self.getPosition()
+                x, y = possible_new_target
+                self.setPlan(self.getBoard().shortestPath(i, j, x, y))
+                self.setTargetPosition(self.getTargetFromPlan())
+
+        self.move(self.positionToDirection(self.popPlan())) # Move in the direction of the next move in the plan
+        if self.getPlan() == []:
+        # If the plan is empty, we have reached the target position
+            self.setTargetPosition(None)
+            consume_apple = self.eat()
+
+        self.communicate(apple_consumed=bool(consume_apple))
+        return consume_apple
         
     def act(self):
-        raise NotImplementedError("Cooperative agents must implement the act method.")
-            
+        self.setSustainableConsumption(self.computeSustainableConsumption())
+
+        if self.getSustainableConsumption() < self.getRoundEndowment():
+            # Limit reached, move in a random direction
+            self.moveInRandomDirection()
+            return 0
+
+        return self.moveTowardsApple()
+
     def update(self, state, action, reward, next_state):
         raise NotImplementedError("Cooperative agents must implement the update method.")
 

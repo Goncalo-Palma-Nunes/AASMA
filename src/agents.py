@@ -27,6 +27,7 @@ class Agent:
 
     __metaclass__ = abc.ABCMeta
     id = itertools.count()
+    roundEndowment = 0
 
     ###########################
     ###     Constructor     ###
@@ -87,6 +88,9 @@ class Agent:
     def getBoard(self):
         return self.board
     
+    def getRoundEndowment(self):
+        return self.roundEndowment
+    
     def utilityFunction(self):
         return self.utility_function
     
@@ -94,6 +98,9 @@ class Agent:
         if not isinstance(env, Board):
             raise ValueError("Environment must be of type Board.")
         self.env = env
+
+    def setRoundEndowment(self, endowment):
+        self.roundEndowment = endowment
 
     def setTimeStamp(self, timestamp):
         self.timestamp = timestamp
@@ -181,6 +188,7 @@ class Agent:
         if self.onResource():
             # print("EATING EATING EATING YUM YUM YUM")
             self.setEndowment(self.getEndowment() + 1)
+            self.setRoundEndowment(self.getRoundEndowment() + 1)
             self.getEnv().removeResource(self.getPosition()[0], self.getPosition()[1])
             self.getBoard().removeResource(self.getPosition()[0], self.getPosition()[1])
             return SUCCESS
@@ -249,6 +257,17 @@ class Agent:
             return RIGHT
         else:
             raise ValueError("Position must be different from current position.")
+        
+    
+    def anyAgentsInRadius(self):
+        i, j = self.getPosition()
+        for k in range(i - SIGHT_RADIUS, i + SIGHT_RADIUS + 1):
+            for l in range(j - SIGHT_RADIUS, j + SIGHT_RADIUS + 1):
+                if self.getEnv().validPosition(k, l) and \
+                    not self.getEnv().noAgent(k, l):
+                    return True
+        return False
+
 
     ############################
     ###    Communication     ###

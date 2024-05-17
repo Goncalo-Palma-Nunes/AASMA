@@ -171,6 +171,9 @@ class Game:
         self.setCurrentTurn(0)
         self.board.growResources()
 
+        for player in self.getPlayers():
+            player.setRoundEndowment(0)
+
         # TODO - vote
 
     def nextTurn(self):
