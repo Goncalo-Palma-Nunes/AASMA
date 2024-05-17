@@ -1,6 +1,7 @@
 from typing import Any
+from environment import Game
+
 import pygame
-from game import Game
 
 class CellSprite:
     def __init__(self, cell_size, image, offset=(0,0)):
@@ -32,8 +33,8 @@ class CellSprite:
         surface.blit(self.image, (i * self.cell_size + self.offset[0], j * self.cell_size + self.offset[1]))
         
 class UI:
-    def __init__(self, board, game, screen, cell_size, sprite_scale):
-        self.board = board
+    def __init__(self, game, screen, cell_size, sprite_scale):
+        self.board = game.getBoard()
         self.screen = screen
         self.cell_size = cell_size
         self.game = game
@@ -63,33 +64,33 @@ class UI:
         self.font = font
         
     def setAppleSprite(self, cell_size, sprite_scale):
-        self.apple_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/apple.png")
+        self.apple_sprite = CellSprite.fromFile(cell_size, sprite_scale, "../assets/apple.png")
         
     def getAppleSprite(self):
         return self.apple_sprite
     
     def setGrassSprite(self, cell_size, sprite_scale):
-        self.grass_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/grass.png")
+        self.grass_sprite = CellSprite.fromFile(cell_size, sprite_scale, "../assets/grass.png")
         
     def getGrassSprite(self):    
         return self.grass_sprite
 
     def setJailSprite(self, cell_size, sprite_scale):
-        self.jail_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/jail.png")
+        self.jail_sprite = CellSprite.fromFile(cell_size, sprite_scale, "../assets/jail.png")
     
     def getJailSprite(self):    
         return self.jail_sprite
     
     def setSlimeSprites(self, cell_size, sprite_scale):
         slime_sprites = ["slime_bluegreen.png", "slime_gold.png", "slime_pink.png", "slime_purple.png"]
-        self.slime_sprites = [CellSprite.fromFile(cell_size, sprite_scale, f"assets/{name}") for name in slime_sprites]
+        self.slime_sprites = [CellSprite.fromFile(cell_size, sprite_scale, f"../assets/{name}") for name in slime_sprites]
     
     def getSlimeSprites(self):   
         return self.slime_sprites
         
     def setAgentSprites(self):
-        for player in self.getGame().getPlayers():
-            id_text = self.getFont().render(str(player.getId()), True, (0, 0, 0))
+        for agent in self.getGame().getAgents():
+            id_text = self.getFont().render(str(agent.getId()), True, (0, 0, 0))
     
             image_size = (max(self.getCellSize(), id_text.get_rect().width), self.getCellSize() + id_text.get_rect().height)
             image_offset = (min(0, self.getCellSize() - id_text.get_rect().width) / 2, -id_text.get_rect().height)
@@ -98,21 +99,21 @@ class UI:
             image.blit(self.getSlimeSprites()[0].getImage(), (-image_offset[0], -image_offset[1]))
             image.blit(id_text, ((image_size[0] - id_text.get_rect().width) / 2, 0))
 
-            self.agent_sprites[player.getId()] = CellSprite(self.getCellSize(), image, offset=(0, image_offset[1]))
+            self.agent_sprites[agent.getId()] = CellSprite(self.getCellSize(), image, offset=(0, image_offset[1]))
             
     def getAgentSprites(self):
         return self.agent_sprites
     
     def drawBoard(self):
-        for i in range(self.getBoard().getBoardSize()):
-            for j in range(self.getBoard().getBoardSize()):
+        for i in range(self.getBoard().getSize()):
+            for j in range(self.getBoard().getSize()):
 
                 cell = self.getBoard().getCell(i, j)
                 self.getGrassSprite().drawTo(self.getScreen(), i, j)
 
-                if not cell.noResource():
+                if cell.hasResource():
                     self.getAppleSprite().drawTo(self.getScreen(), i, j)
-                if not cell.noAgent():
+                if cell.hasAgent():
                     self.getAgentSprites()[cell.getAgent().getId()].drawTo(self.getScreen(), i, j)
                     if cell.getAgent() == self.getGame().getImprisoned():
                         self.getJailSprite().drawTo(self.getScreen(), i, j)
@@ -122,11 +123,11 @@ class UI:
         row_size = 2
         col_size = 5
         
-        board_size = self.getBoard().getBoardSize()
+        board_size = self.getBoard().getSize()
         max_rows = board_size / row_size - margin
 
-        cols = len(self.getGame().getPlayers()) // max_rows + 1
-        rows = len(self.getGame().getPlayers()) // cols
+        cols = len(self.getGame().getAgents()) // max_rows + 1
+        rows = len(self.getGame().getAgents()) // cols
 
         center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
         box_size = (cols * col_size * self.getCellSize(), rows * row_size * self.getCellSize())

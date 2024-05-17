@@ -1,6 +1,5 @@
-from board import Board
-from random_walker import RandomWalker
-from game import Game
+from behavior import RandomBehavior
+from environment import Game
 from ui import CellSprite, UI
 
 import pygame
@@ -12,32 +11,25 @@ if __name__ == "__main__":
     board_size = 32
     resource_frequency = 0.1
     resource_growth_frequency = 0.2
-    num_rounds = 2
-    num_turns = 20 # Turns per round
-    turn_time = 20 # Milliseconds per game turn
+    sight_radius = 4
+    num_rounds = 100
+    num_turns = 50 # Turns per round
+    turn_time = 25 # Milliseconds per game turn
     accusation_individual_time = 2000 # Milliseconds the accusation screen is shown
-    accusation_ranking_time = 2000 # Milliseconds the accusation results screen is shown
+    accusation_ranking_time = 50 # Milliseconds the accusation results screen is shown
     voting_individual_time = 50 # Milliseconds the voting screen is shown
     voting_result_time = 50 # Milliseconds the voting results screen is shown
 
-    player_count = 50
+    agent_count = 50
 
-    # Initialize board and game
-    board = Board(board_size, resource_frequency, resource_growth_frequency)
-    players = [RandomWalker(board, 0, lambda x: 0) for i in range(player_count)]
-    for i in range(player_count):
-        players[i].setOtherPlayers(players[:i] + players[i+1:])
-
-    board.generateResources()
-    
-    game = Game(board, players, num_rounds, num_turns)
-    for i in range(player_count):
-        players[i].setBoard(deep_copy=True) # Deep copy the board for each player
+    # Initialize behaviors and environment
+    behaviors = [RandomBehavior() for i in range(agent_count)]
+    game = Game(board_size, behaviors, sight_radius, resource_frequency, resource_growth_frequency, num_rounds, num_turns)
 
     # Setup pygame
     pygame.init()
-    screen = pygame.display.set_mode([board.getBoardSize() * cell_size, board.getBoardSize() * cell_size])
-    ui = UI(board, game, screen, cell_size, sprite_scale)
+    screen = pygame.display.set_mode([board_size * cell_size, board_size * cell_size])
+    ui = UI(game, screen, cell_size, sprite_scale)
 
     # Prepare agent sprites
     ui.setAgentSprites()
