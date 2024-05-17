@@ -41,12 +41,12 @@ if __name__ == "__main__":
     resource_frequency = 0.1
     resource_growth_frequency = 0.2
     num_rounds = 100
-    num_turns = 25 # Turns per round
-    turn_time = 250 # Milliseconds per game turn
-    accusation_individual_time = 2000 # Milliseconds the accusation screen is shown
-    accusation_ranking_time = 500 # Milliseconds the accusation results screen is shown
-    voting_individual_time = 500 # Milliseconds the voting screen is shown
-    voting_result_time = 500 # Milliseconds the voting results screen is shown
+    num_turns = 100 # Turns per round
+    turn_time = 25 # Milliseconds per game turn
+    accusation_individual_time = 200 # Milliseconds the accusation screen is shown
+    accusation_ranking_time = 50 # Milliseconds the accusation results screen is shown
+    voting_individual_time = 50 # Milliseconds the voting screen is shown
+    voting_result_time = 50 # Milliseconds the voting results screen is shown
 
     player_count = 50
 
