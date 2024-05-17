@@ -228,6 +228,7 @@ class Game:
             for player in self.getPlayers():
                 if self.getImprisoned() != player: # Skip imprisoned player
                     # print("bbbbbb")
+                    player.perceive(self.getBoard())
                     self.addTotalReward(player.act())
             # exit(0)
 

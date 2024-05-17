@@ -18,7 +18,6 @@ class GreedyAgent(DeliberativeAgent):
     ###########################
 
     def act(self):
-        self.perceive(self.getEnv())
         consume_apple = False
         self.targetStillValid()
 
