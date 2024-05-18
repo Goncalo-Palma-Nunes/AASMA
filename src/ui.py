@@ -279,7 +279,11 @@ class UI:
             self.getAgentSprites()[player.getId()].drawTo(self.getScreen(), position[0], position[1])
 
             # Draw text
-            accusesText = self.getFont().render(f"votes {vote}", True, (0, 0, 0))
+            if vote == True:
+                text = "yes"
+            else:
+                text = "no"
+            accusesText = self.getFont().render(f"votes {text}", True, (0, 0, 0))
             text_x = position[0] + self.getAgentSprites()[player.getId()].getWidth() / self.getCellSize()
             self.getScreen().blit(accusesText, ((text_x + 0.25) * self.getCellSize(), position[1] * self.getCellSize()))
-        
+            
