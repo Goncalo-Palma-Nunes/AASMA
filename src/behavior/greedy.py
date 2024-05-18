@@ -41,7 +41,7 @@ class GreedyBehavior(CooperativeBehavior):
         return Move(self.positionToDirection(self.getPlan().next()))
 
     def accuse(self):
-        return None
+        return super().accuse()
 
     def vote(self, accused, accused_actions):
         return None

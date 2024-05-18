@@ -101,7 +101,18 @@ class CooperativeBehavior(Behavior):
 
     def accuse(self):
         if self.known_agents:
-            return random.choice(list(self.known_agents))
+            # Accuse the one agent seen to have eaten more by iterating
+            # through the agent's seen_gathers dictionary and comparing the
+            # number of seen gathers
+            accused = None
+            accused_actions = -1
+            seen_gathers = self.getAgent().getSeenGathers()
+            for agent in self.known_agents:
+                if len(seen_gathers.get(agent, set())) > accused_actions:
+                    accused = agent
+                    accused_actions = len(seen_gathers.get(agent, set()))
+
+            return accused
         return None
 
     def vote(self, accused, accused_actions):
