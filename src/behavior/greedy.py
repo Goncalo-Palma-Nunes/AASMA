@@ -44,4 +44,5 @@ class GreedyBehavior(CooperativeBehavior):
         return super().accuse()
 
     def vote(self, accused, accused_actions):
-        return None
+        # Votes true if it has seen the accused agent gathering more than itself
+        return accused_actions > self.getAgent().getRoundEndowment()
