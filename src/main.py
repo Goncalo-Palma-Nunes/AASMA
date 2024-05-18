@@ -16,7 +16,7 @@ if __name__ == "__main__":
     num_turns = 50 # Turns per round
     turn_time = 25 # Milliseconds per game turn
     accusation_individual_time = 2000 # Milliseconds the accusation screen is shown
-    accusation_ranking_time = 50 # Milliseconds the accusation results screen is shown
+    accusation_ranking_time = 2000 # Milliseconds the accusation results screen is shown
     voting_individual_time = 50 # Milliseconds the voting screen is shown
     voting_result_time = 50 # Milliseconds the voting results screen is shown
 
@@ -60,11 +60,10 @@ if __name__ == "__main__":
         elif game.isAccusing():
             game.step()
         elif game.isVoting():
-            if current_time < last_step_time + voting_individual_time:
+            if current_time < last_step_time + accusation_individual_time:
                 ui.drawPopUpAccusationList()
-                    
             elif current_time < last_step_time + accusation_individual_time + accusation_ranking_time:
-                pass # TODO: show accusation ranking popup.
+                ui.drawPopUpAccusationRanking()
             else:
                 game.step()
 

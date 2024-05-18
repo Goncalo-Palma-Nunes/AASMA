@@ -102,6 +102,17 @@ class Game:
                 most_accused = accused
         return most_accused
     
+    def getOrderedAccusedList(self):
+        accusation_count = {}
+        for player in self.getAgents():
+            accusation_count[player] = 0
+        for accused in self.getAccusations().values():
+            if accused in accusation_count:
+                accusation_count[accused] += 1
+            else:
+                accusation_count[accused] = 1
+        return {k: v for k, v in sorted(accusation_count.items(), key=lambda item: item[1], reverse=True)}
+    
     def getMostVoted(self):
         max_count = 0
         most_voted = None
