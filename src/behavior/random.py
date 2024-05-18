@@ -12,6 +12,9 @@ class RandomBehavior(Behavior):
     ###       Methods       ###
     ###########################
 
+    def moveRandomly(self):
+        return Move(random.choice([UP, DOWN, LEFT, RIGHT])) 
+
     def act(self, view, seen_actions):
         for agent, action in seen_actions:
             self.known_agents.add(agent)
@@ -20,7 +23,7 @@ class RandomBehavior(Behavior):
         if view.hasResource(i, j):
             return Gather()
 
-        return Move(random.choice([UP, DOWN, LEFT, RIGHT]))
+        return self.moveRandomly()
 
     def accuse(self):
         if self.known_agents:

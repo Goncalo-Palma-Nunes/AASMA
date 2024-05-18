@@ -55,6 +55,9 @@ class Agent:
     def setRoundEndowment(self, endowment):
         self.roundEndowment = endowment
 
+    def getSightRadius(self):
+        return self.sight_radius
+
     def getSeenGathers(self, accused):
         return self.seen_gathers.get(accused, set())
 

@@ -1,5 +1,7 @@
 from .behavior import Behavior, Plan
 from environment import Gather, Move, UP, DOWN, LEFT, RIGHT, Board, Agent
+from .random import RandomBehavior
+
 
 import random
 
@@ -72,13 +74,8 @@ class CooperativeBehavior(Behavior):
             return RIGHT
         else:
             raise ValueError("Position must be different from current position.")
-
-    def act(self, view : Board, seen_actions):
-        for agent, action in seen_actions:
-            self.known_agents.add(agent)
-
-        self.setSustainableConsumption(self.computeSustainableConsumption(len(self.known_agents)))
-
+        
+    def moveTowardsResource(self, view : Board):
         if view.hasResource(self.getPosition()[0], self.getPosition()[1]) \
             and self.getAgent().getRoundEndowment() < self.getSustainableConsumption():
             return Gather()
@@ -86,11 +83,20 @@ class CooperativeBehavior(Behavior):
         if self.getPlan().isEmpty() or not self.targetStillValid():
             self.getPlan().definePlan(self.getAgent().pathToClosestApple())
             if self.getPlan().isEmpty():
-                return Move(random.choice([UP, DOWN, LEFT, RIGHT]))
+                return RandomBehavior.moveRandomly()
             
             self.setTargetPosition(self.getPlan().getTarget())
 
         return Move(self.positionToDirection(self.getPlan().next()))
+
+
+    def act(self, view : Board, seen_actions):
+        for agent, action in seen_actions:
+            self.known_agents.add(agent)
+
+        self.setSustainableConsumption(self.computeSustainableConsumption(len(self.known_agents)))
+
+        return self.moveTowardsResource(view)
 
 
     def accuse(self):
