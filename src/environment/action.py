@@ -1,4 +1,6 @@
 import abc
+from src.environment.board import Board
+from src.environment.agent import Agent
 
 #######################
 ###    Constants    ###
@@ -21,7 +23,7 @@ class Action:
     ###########################
 
     @abc.abstractmethod
-    def execute(self, agent, board):
+    def execute(self, agent : Agent, board : Board):
         pass
 
 class Move(Action):
@@ -36,7 +38,7 @@ class Move(Action):
     ###       Methods       ###
     ###########################
 
-    def execute(self, agent, board):
+    def execute(self, agent : Agent, board : Board):
         old_i, old_j = agent.getPosition()
         if self.direction == UP:
             new_i, new_j = old_i, old_j - 1
@@ -59,6 +61,6 @@ class Gather(Action):
     ###       Methods       ###
     ###########################
 
-    def execute(self, agent, board):
+    def execute(self, agent : Agent, board : Board):
         if board.takeResource(agent.getPosition()[0], agent.getPosition()[1]):
             agent.incrementEndowment()

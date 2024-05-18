@@ -23,6 +23,7 @@ class Agent:
         self.behavior.setAgent(self)
 
         self.endowment = 0
+        self.roundEndowment = 0
         self.view = None
         self.seen_gathers = {}
 
@@ -33,8 +34,14 @@ class Agent:
     def getId(self):
         return self.id
     
+    def getRoundEndowment(self):
+        return self.roundEndowment
+    
     def getBehavior(self):
         return self.behavior
+    
+    def getView(self):
+        return self.view
 
     def getEndowment(self):
         return self.endowment
@@ -44,6 +51,9 @@ class Agent:
 
     def setPosition(self, position):
         self.position = position
+
+    def setRoundEndowment(self, endowment):
+        self.roundEndowment = endowment
 
     def getSeenGathers(self, accused):
         return self.seen_gathers.get(accused, set())
@@ -58,6 +68,25 @@ class Agent:
 
     def incrementEndowment(self):
         self.endowment += 1
+        self.roundEndowment += 1
+
+    def pathToClosestApple(self):
+        """Considers the entire view """
+        return self.getView().shortestPath(self.getPosition())
+
+    def closestAppleInRadius(self):
+        """Considers only the agent's sight radius"""
+        i, j = self.getPosition()
+        cell = None
+        cell_distance = float('inf')
+        for k in range(i - self.sight_radius, i + self.sight_radius + 1):
+            for l in range(j - self.sight_radius, j + self.sight_radius + 1):
+                if self.getView().hasResource(k, l) and \
+                    self.getView().manhattanDistance((i, j), (k, l)) < cell_distance:
+                    cell = (k, l)
+                    cell_distance = self.getView().manhattanDistance((i, j), (k, l))
+
+        return cell
 
     def act(self, timestamp, board, seen_actions):
         # Store any seen gathers

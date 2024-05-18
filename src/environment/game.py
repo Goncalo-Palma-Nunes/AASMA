@@ -204,6 +204,10 @@ class Game:
         self.setCurrentTurn(0)
         self.board.growResources(self.getResourceGrowthFrequency())
 
+        # Reset agents' round endowments
+        for agent in self.getAgents():
+            agent.setRoundEndowment(0)
+
     def nextTurn(self):
         self.setCurrentTurn(self.getCurrentTurn() + 1)
 
