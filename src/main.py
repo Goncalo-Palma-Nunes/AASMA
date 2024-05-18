@@ -17,7 +17,7 @@ if __name__ == "__main__":
     turn_time = 25 # Milliseconds per game turn
     accusation_individual_time = 2000 # Milliseconds the accusation screen is shown
     accusation_ranking_time = 2000 # Milliseconds the accusation results screen is shown
-    voting_individual_time = 50 # Milliseconds the voting screen is shown
+    voting_individual_time = 2000 # Milliseconds the voting screen is shown
     voting_result_time = 50 # Milliseconds the voting results screen is shown
 
     agent_count = 50
@@ -43,10 +43,9 @@ if __name__ == "__main__":
 
         current_time = pygame.time.get_ticks()
         if game.isRound():
-            if game.getCurrentRound() > 0 and game.getCurrentTurn() == 0 and current_time < last_step_time + voting_individual_time:
-                # TODO: Show the votes of each agent
-                pass
-            elif game.getCurrentRound() > 0 and game.getCurrentTurn() == 0 and current_time < last_step_time + voting_individual_time + voting_result_time:
+            if game.getCurrentRound() > 0 and game.getCurrentTurn() == 1 and current_time < last_step_time + voting_individual_time:
+                ui.drawPopUpVotingList()
+            elif game.getCurrentRound() > 0 and game.getCurrentTurn() == 1 and current_time < last_step_time + voting_individual_time + voting_result_time:
                 # TODO: Show the final voting results
                 pass
             else:

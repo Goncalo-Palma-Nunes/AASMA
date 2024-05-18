@@ -238,3 +238,48 @@ class UI:
                 rank_font = pygame.font.SysFont("arialblack", 10 * self.getCellSize() // 25)    
                 rankText = rank_font.render(text, True, (0,0,0))
                 self.getScreen().blit(rankText, (accusation_box_position[0], accusation_box_position[1]))
+                
+    def drawPopUpVotingList(self):
+        margin = 4
+        row_size = 2
+        col_size = 5
+        
+        board_size = self.getBoard().getSize()
+        max_rows = board_size / row_size - margin
+
+        cols = len(self.getGame().getAgents()) // max_rows + 1
+        rows = len(self.getGame().getAgents()) // cols
+
+        center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
+        box_size = (cols * col_size * self.getCellSize(), rows * row_size * self.getCellSize())
+        box_position = (center[0] - box_size[0] / 2, center[1] - box_size[1] / 2)
+                
+        box_size_background = (cols * col_size * self.getCellSize() + (row_size * self.getCellSize() /3), rows * row_size * self.getCellSize() + row_size * self.getCellSize())
+        box_position_background = (center[0] - box_size_background[0] / 2, center[1] - box_size_background[1] / 2 - (row_size * self.getCellSize() / 3))
+        
+        pygame.draw.rect(self.getScreen(), (161, 102, 47), (box_position_background, box_size_background))
+        pygame.draw.rect(self.getScreen(), (216, 181, 137), (box_position, box_size))
+                
+        new_font = pygame.font.SysFont("arialblack", self.getCellSize())
+        accusationText = new_font.render("Voting List", True, (0,0,0))
+
+        self.getScreen().blit(accusationText, (box_position[0], box_position_background[1] + row_size * self.getCellSize()/ 6))
+
+        for player, vote in self.getGame().getVotes().items():
+            i = player.getId() // rows
+            j = player.getId() % rows
+            position = ((box_position[0] + i * col_size * self.getCellSize()) / self.getCellSize(), (box_position[1] + j * row_size * self.getCellSize()) / self.getCellSize() + 1)
+                    
+            # Draw accusation boxes
+            accusation_box_size = (col_size * self.getCellSize(), row_size * self.getCellSize())
+            accusation_box_position = (box_position[0] + i * col_size * self.getCellSize(), box_position[1] + j * row_size * self.getCellSize())
+            pygame.draw.rect(self.getScreen(), (161, 102, 47), (accusation_box_position, accusation_box_size), 1)
+                    
+            # Draw player and accused sprites
+            self.getAgentSprites()[player.getId()].drawTo(self.getScreen(), position[0], position[1])
+
+            # Draw text
+            accusesText = self.getFont().render(f"votes {vote}", True, (0, 0, 0))
+            text_x = position[0] + self.getAgentSprites()[player.getId()].getWidth() / self.getCellSize()
+            self.getScreen().blit(accusesText, ((text_x + 0.25) * self.getCellSize(), position[1] * self.getCellSize()))
+        
