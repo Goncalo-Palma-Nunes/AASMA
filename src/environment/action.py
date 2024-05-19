@@ -10,6 +10,7 @@ UP = "up"
 DOWN = "down"
 LEFT = "left"
 RIGHT = "right"
+STAY = "stay"
 
 class Action:
     ###########################

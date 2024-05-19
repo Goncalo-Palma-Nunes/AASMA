@@ -53,6 +53,12 @@ class CooperativeBehavior(Behavior):
         num_apples = board.getNumberOfResources()
         if num_apples == 0:
             return 0 #idk what number to return in this case
+        if num_players == 0:
+            return 1
+        if (boardsize - num_apples) == 0:
+            # Few apples, so they should be more conservative
+            sustainable_consumption = num_apples / (4 * num_players) 
+            return sustainable_consumption
 
         sustainable_consumption = num_apples + (self.getGrowthFrequency()) * num_apples / (boardsize - num_apples)
         sustainable_consumption = sustainable_consumption / (2 * num_players)
@@ -66,6 +72,8 @@ class CooperativeBehavior(Behavior):
         self.sustainable_consumption = consumption
 
     def positionToDirection(self, position):
+        print("Position: ", position)
+        print("Current Position: ", self.getPosition())
         if position[0] < self.getPosition()[0]:
             return UP
         elif position[0] > self.getPosition()[0]:
@@ -75,7 +83,9 @@ class CooperativeBehavior(Behavior):
         elif position[1] > self.getPosition()[1]:
             return RIGHT
         else:
-            raise ValueError("Position must be different from current position.")
+            # raise ValueError("Position must be different from current position.")
+            return RandomBehavior.moveRandomly()
+
         
     def moveTowardsResource(self, view : Board):
         if view.hasResource(self.getPosition()[0], self.getPosition()[1]) \
@@ -89,6 +99,7 @@ class CooperativeBehavior(Behavior):
             
             self.setTargetPosition(self.getPlan().getTarget())
 
+        print("Plan: ", self.getPlan())
         return Move(self.positionToDirection(self.getPlan().next()))
 
 
@@ -108,15 +119,19 @@ class CooperativeBehavior(Behavior):
             # number of seen gathers
             accused = None
             accused_actions = -1
-            seen_gathers = self.getAgent().getSeenGathers()
             for agent in self.known_agents:
-                if len(seen_gathers.get(agent, set())) > accused_actions:
+                seen_gathers = self.getAgent().getSeenGathers(agent)
+                if len(seen_gathers) > accused_actions:
                     accused = agent
-                    accused_actions = len(seen_gathers.get(agent, set()))
+                    accused_actions = len(seen_gathers)
 
             return accused
         return None
 
-    def vote(self, accused, accused_actions):
+    def vote(self, accused_actions, accused):
         # Votes true if it has seen the accused agent gathering more than itself
-        return accused_actions > self.getAgent().getRoundEndowment()
+        # print("Accused Actions: ", accused_actions)
+        # print("Agent Endowment: ", self.getAgent().getRoundEndowment())
+        # print("Accused: ", accused)
+        # print("seen_gathers: ", len(self.getAgent().getSeenGathers(accused)))
+        return len(self.getAgent().getSeenGathers(accused)) > self.getAgent().getRoundEndowment()

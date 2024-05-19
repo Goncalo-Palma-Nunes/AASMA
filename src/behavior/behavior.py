@@ -73,7 +73,7 @@ class Plan:
         return self.plan[0]
     
     def next(self):
-        self.plan.pop(0)
+        return self.plan.pop(0)
 
     def definePlan(self, plan : list):
         self.plan = plan
@@ -86,3 +86,6 @@ class Plan:
     
     def getTarget(self):
         return self.plan[-1]
+    
+    def __str__(self) -> str:
+        return str(self.plan)

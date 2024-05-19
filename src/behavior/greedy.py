@@ -43,5 +43,5 @@ class GreedyBehavior(CooperativeBehavior):
     def accuse(self):
         return super().accuse()
 
-    def vote(self, accused, accused_actions):
-        return super().vote(accused, accused_actions)
+    def vote(self, accused_actions, accused):
+        return super().vote(accused_actions, accused)
