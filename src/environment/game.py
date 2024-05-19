@@ -4,7 +4,64 @@ from .board import Board
 from math import floor
 from random import random
 
+from statistics import *
+
 class Game:
+
+    class GameStats:
+        def __init__(self, game):
+            self.game = game
+            self.round_stats = []
+            self.average_endowment = []
+            self.median_endowment = []
+            self.max_endowment = []
+            self.min_endowment = []
+            self.variance_endowment = []
+            self.standard_deviation_endowment = []
+
+        def computeRoundStats(self):
+            round_stats = {}
+            round_stats["average_endowment"] = self.getAverageEndowment()
+            round_stats["median_endowment"] = self.getMedianEndowment()
+            round_stats["max_endowment"] = self.getMaxEndowment()
+            round_stats["min_endowment"] = self.getMinEndowment()
+            round_stats["variance_endowment"] = self.getVarianceEndowment()
+            round_stats["standard_deviation_endowment"] = self.getStandardDeviationEndowment()
+            return round_stats
+        
+        def append(self, round_stats):
+            self.round_stats.append(round_stats)
+            self.average_endowment.append(round_stats["average_endowment"])
+            self.median_endowment.append(round_stats["median_endowment"])
+            self.max_endowment.append(round_stats["max_endowment"])
+            self.min_endowment.append(round_stats["min_endowment"])
+            self.variance_endowment.append(round_stats["variance_endowment"])
+            self.standard_deviation_endowment.append(round_stats["standard_deviation_endowment"])
+        
+        def getAverageEndowment(self):
+            return sum([agent.roundEndowment for agent in self.game.agents]) / len(self.game.agents)
+        
+        def getMedianEndowment(self):
+            endowments = [agent.roundEndowment for agent in self.game.agents]
+            endowments.sort()
+            return endowments[len(endowments) // 2]
+
+        def getMaxEndowment(self):
+            return max([agent.roundEndowment for agent in self.game.agents])
+
+        def getMinEndowment(self):
+            return min([agent.roundEndowment for agent in self.game.agents])
+        
+        def getVarianceEndowment(self):
+            mean = self.getAverageEndowment()
+            return sum([(agent.roundEndowment - mean) ** 2 for agent in self.game.agents]) / len(self.game.agents)
+        
+        def getStandardDeviationEndowment(self):
+            return self.getVarianceEndowment() ** 0.5
+
+        def getStats(self):
+            return self.round_stats
+
     ###########################
     ###     Constructor     ###
     ###########################
@@ -15,6 +72,7 @@ class Game:
         self.num_rounds = num_rounds
         self.num_turns = num_turns
         self.resource_growth_frequency = resource_growth_frequency
+        self.stats = Game.GameStats(self)
 
         # Create agents from the behaviors
         if board_size ** 2 < len(behaviors):
@@ -210,7 +268,9 @@ class Game:
 
     def step(self):
         if self.getDone():
-            return
+            stats = self.stats.computeRoundStats()
+            self.stats.append(stats)
+            return self.stats
         
         if self.isAccusing():
             # Collect accusations from agents
@@ -253,6 +313,9 @@ class Game:
             if self.remainingRounds() == 1:
                 self.setDone(True)
             else:
+                # Compute statistics
+                stats = self.stats.computeRoundStats()
+                self.stats.append(stats)
                 self.nextRound()
         else: # Normal turn
             # Advance the timestamp of the board cells
@@ -277,6 +340,8 @@ class Game:
                     self.setDone(True)
             else:
                 self.nextTurn()
+        
+        return self.stats
 
 
     def __str__(self):
