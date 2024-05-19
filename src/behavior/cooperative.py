@@ -116,4 +116,5 @@ class CooperativeBehavior(Behavior):
         return None
 
     def vote(self, accused, accused_actions):
-        return random.choice([True, False])
+        # Votes true if it has seen the accused agent gathering more than itself
+        return accused_actions > self.getAgent().getRoundEndowment()
