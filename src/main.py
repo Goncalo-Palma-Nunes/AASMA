@@ -51,7 +51,9 @@ if __name__ == "__main__":
                 running = False
 
         current_time = pygame.time.get_ticks()
-        if game.isRound():
+        if game.getDone():
+            pass 
+        elif game.isRound():
             if game.getCurrentRound() > 0 and game.getCurrentTurn() == 0 and current_time < last_step_time + voting_individual_time:
                 ui.drawPopUpVotingList()
             elif game.getCurrentRound() > 0 and game.getCurrentTurn() == 0 and current_time < last_step_time + voting_individual_time + voting_result_time:

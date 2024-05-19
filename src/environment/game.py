@@ -309,8 +309,8 @@ class Game:
                     # Imprison the accused agent
                     print(f"{self.accused.getId()} was imprisoned.")
                     self.setImprisoned(self.accused)
-
-            if self.remainingRounds() == 1:
+                           
+            if self.remainingRounds() == 1 or self.getBoard().getNumberOfResources() == 0:
                 self.setDone(True)
             else:
                 # Compute statistics
@@ -335,7 +335,9 @@ class Game:
             for agent, action in self.actions:
                 action.execute(agent, self.getBoard())
 
-            if self.remainingTurns() == 1:
+            if self.getBoard().getNumberOfResources() == 0:
+                self.setDone(True)
+            elif self.remainingTurns() == 1:
                 if self.remainingRounds() == 1:
                     self.setDone(True)
             else:
