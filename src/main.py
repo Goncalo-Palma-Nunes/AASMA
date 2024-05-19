@@ -43,9 +43,9 @@ if __name__ == "__main__":
 
         current_time = pygame.time.get_ticks()
         if game.isRound():
-            if game.getCurrentRound() > 0 and game.getCurrentTurn() == 1 and current_time < last_step_time + voting_individual_time:
+            if game.getCurrentRound() > 0 and game.getCurrentTurn() == 0 and current_time < last_step_time + voting_individual_time:
                 ui.drawPopUpVotingList()
-            elif game.getCurrentRound() > 0 and game.getCurrentTurn() == 1 and current_time < last_step_time + voting_individual_time + voting_result_time:
+            elif game.getCurrentRound() > 0 and game.getCurrentTurn() == 0 and current_time < last_step_time + voting_individual_time + voting_result_time:
                 ui.drawPopUpVotingResult()
             else:
                 # If enough time has passed, advance a turn
@@ -63,6 +63,7 @@ if __name__ == "__main__":
             elif current_time < last_step_time + accusation_individual_time + accusation_ranking_time:
                 ui.drawPopUpAccusationRanking()
             else:
+                last_step_time = current_time
                 game.step()
 
         pygame.display.flip()
