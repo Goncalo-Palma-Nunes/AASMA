@@ -1,4 +1,4 @@
-from behavior import RandomBehavior
+from behavior import RandomBehavior, GreedyBehavior, CooperativeBehavior
 from environment import Game
 from ui import CellSprite, UI
 
