@@ -23,7 +23,7 @@ if __name__ == "__main__":
     agent_count = 50
 
     # Initialize behaviors and environment
-    behaviors = [RandomBehavior() for i in range(agent_count)]
+    behaviors = [RandomBehavior(resource_growth_frequency) for i in range(agent_count)]
     game = Game(board_size, behaviors, sight_radius, resource_frequency, resource_growth_frequency, num_rounds, num_turns)
 
     # Setup pygame

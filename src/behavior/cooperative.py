@@ -7,7 +7,7 @@ import random
 
 class CooperativeBehavior(Behavior):
     def __init__(self, growthFrequency):
-        super(growthFrequency).__init__()
+        super().__init__(growthFrequency)
         self.known_agents = set()
         self.sustainable_consumption = 0
         self.plan = Plan()
