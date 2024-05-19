@@ -71,9 +71,12 @@ class CooperativeBehavior(Behavior):
     def setSustainableConsumption(self, consumption):
         self.sustainable_consumption = consumption
 
+    def moveRandomly(self):
+        return Move(random.choice([UP, DOWN, LEFT, RIGHT]))
+
     def positionToDirection(self, position):
-        print("Position: ", position)
-        print("Current Position: ", self.getPosition())
+        # print("Position: ", position)
+        # print("Current Position: ", self.getPosition())
         if position[0] < self.getPosition()[0]:
             return UP
         elif position[0] > self.getPosition()[0]:
@@ -84,7 +87,7 @@ class CooperativeBehavior(Behavior):
             return RIGHT
         else:
             # raise ValueError("Position must be different from current position.")
-            return RandomBehavior.moveRandomly()
+            return self.moveRandomly()
 
         
     def moveTowardsResource(self, view : Board):
@@ -95,7 +98,7 @@ class CooperativeBehavior(Behavior):
         if self.getPlan().isEmpty() or not self.targetStillValid():
             self.getPlan().definePlan(self.getAgent().pathToClosestApple())
             if self.getPlan().isEmpty():
-                return RandomBehavior.moveRandomly()
+                return self.moveRandomly()
             
             self.setTargetPosition(self.getPlan().getTarget())
 

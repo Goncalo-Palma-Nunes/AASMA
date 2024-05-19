@@ -14,9 +14,6 @@ class RandomBehavior(Behavior):
 
     def moveRandomly(self):
         return Move(random.choice([UP, DOWN, LEFT, RIGHT]))
-    
-    def moveRandomly():
-        return Move(random.choice([UP, DOWN, LEFT, RIGHT]))
 
     def act(self, view, seen_actions):
         for agent, action in seen_actions:

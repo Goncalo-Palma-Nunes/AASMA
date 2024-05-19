@@ -34,7 +34,7 @@ class GreedyBehavior(CooperativeBehavior):
         if self.getPlan().isEmpty() or not self.targetStillValid():
             self.getPlan().definePlan(self.getAgent().pathToClosestApple())
             if self.getPlan().isEmpty():
-                return RandomBehavior.moveRandomly()
+                return super().moveRandomly()
             
             self.setTargetPosition(self.getPlan().getTarget())
 
