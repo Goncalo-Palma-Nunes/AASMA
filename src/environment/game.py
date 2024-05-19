@@ -39,7 +39,9 @@ class Game:
         self.done = False
         self.accusations = {}
         self.votes = {}
+        self.number_of_votes = (0, 0)
         self.imprisoned = None
+        self.accused = None
 
     ###########################
     ### Getters and setters ###
@@ -71,12 +73,18 @@ class Game:
 
     def getVotes(self):
         return self.votes
+    
+    def getNumberOfVotes(self):
+        return self.number_of_votes
 
     def getDone(self):
         return self.done
 
     def getImprisoned(self):
         return self.imprisoned
+    
+    def getMostAccused(self):
+        return self.accused
 
     def getResourceGrowthFrequency(self):
         return self.resource_growth_frequency
@@ -87,20 +95,6 @@ class Game:
 
     def getTotalReward(self):
         return sum(agent.getEndowment() for agent in self.getAgents())
-
-    def getMostAccused(self):
-        max_count = 0
-        most_accused = None
-        accusation_count = {}
-        for accused in self.getAccusations().values():
-            if accused in accusation_count:
-                accusation_count[accused] += 1
-            else:
-                accusation_count[accused] = 1
-            if accusation_count[accused] > max_count:
-                max_count = accusation_count[accused]
-                most_accused = accused
-        return most_accused
     
     def getOrderedAccusedList(self):
         accusation_count = {}
@@ -121,6 +115,9 @@ class Game:
                 max_count = count
                 most_voted = agent
         return most_voted
+    
+    def setNumberOfVotes(self, yes, no):
+        self.number_of_votes = (yes, no)
 
     def isRound(self):
         return self.remainingTurns() > 1
@@ -203,7 +200,7 @@ class Game:
         self.setCurrentRound(self.getCurrentRound() + 1)
         self.setCurrentTurn(0)
         self.board.growResources(self.getResourceGrowthFrequency())
-
+        
         # Reset agents' round endowments
         for agent in self.getAgents():
             agent.setRoundEndowment(0)
@@ -222,35 +219,36 @@ class Game:
                 accusations[agent] = agent.accuse()
             self.setAccusations(accusations)
         elif self.isVoting():
-            accused = self.getMostAccused()
+            self.accused = list(self.getOrderedAccusedList().keys())[0]
             self.setAccusations({})
-
+            
             # Release the last accused agent
             self.setImprisoned(None)
 
-            if accused is not None:
+            if self.accused is not None:
                 # Share information about the accused agent's consumption
                 consumption = set()
                 for agent in self.getAgents():
-                    consumption = consumption | agent.getSeenGathers(accused)
+                    consumption = consumption | agent.getSeenGathers(self.accused)
 
                 # Collect votes from agents
                 votes = {}
                 no_votes = 0
                 yes_votes = 0
                 for agent in self.getAgents():
-                    votes[agent] = agent.vote(consumption, accused)
+                    votes[agent] = agent.vote(consumption, self.accused)
                     if votes[agent]:
                         yes_votes += 1
                     else:
                         no_votes += 1
                 self.setVotes(votes)
 
-                print(f"YES: {yes_votes}, NO: {no_votes} (accused: {accused.getId()})")
+                print(f"YES: {yes_votes}, NO: {no_votes} (accused: {self.accused.getId()})")
+                self.setNumberOfVotes(yes_votes, no_votes)
                 if yes_votes > no_votes:
                     # Imprison the accused agent
-                    print(f"{accused.getId()} was imprisoned.")
-                    self.setImprisoned(accused)
+                    print(f"{self.accused.getId()} was imprisoned.")
+                    self.setImprisoned(self.accused)
 
             if self.remainingRounds() == 1:
                 self.setDone(True)

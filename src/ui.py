@@ -32,12 +32,13 @@ class CellSprite:
     def drawTo(self, surface, i, j):
         surface.blit(self.image, (i * self.cell_size + self.offset[0], j * self.cell_size + self.offset[1]))
         
-    def drawToBigger(self, surface, i, j):
-        new_image = pygame.transform.scale(self.image, (self.cell_size * 2, self.cell_size * 3.5))
+    def drawToBigger(self, surface, i, j, scale):
+        new_image = pygame.transform.scale(self.image, (self.cell_size * scale[0], self.cell_size * scale[1]))
         # Calculate the position to center the larger image
-        new_offset_x = self.offset[0] - (self.cell_size * 2 // 2)
-        new_offset_y = self.offset[1] - (self.cell_size * 3.5 // 2)
+        new_offset_x = self.offset[0] - (self.cell_size * scale[0] // 2)
+        new_offset_y = self.offset[1] - (self.cell_size * scale[1] // 2)
         surface.blit(new_image, (i * self.cell_size + new_offset_x, j * self.cell_size + new_offset_y))
+        
         
 class UI:
     def __init__(self, game, screen, cell_size, sprite_scale):
@@ -218,7 +219,7 @@ class UI:
             elif rank == 1:
                 # Draw player and hammer sprite
                 position = (center[0] / self.getCellSize(), ((upper_box_position[1] + bottom_box_position[1]) /2) / self.getCellSize())
-                self.getAgentSprites()[player_tuple[0].getId()].drawToBigger(self.getScreen(), position[0], position[1])
+                self.getAgentSprites()[player_tuple[0].getId()].drawToBigger(self.getScreen(), position[0], position[1], (2, 3.5))
                 self.hammer_sprite.drawTo(self.getScreen(), position[0] + self.getAgentSprites()[player_tuple[0].getId()].getWidth() / self.getCellSize(), position[1] - self.getAgentSprites()[player_tuple[0].getId()].getHeight() / self.getCellSize())
                 
                 # Draw text
@@ -286,4 +287,63 @@ class UI:
             accusesText = self.getFont().render(f"votes {text}", True, (0, 0, 0))
             text_x = position[0] + self.getAgentSprites()[player.getId()].getWidth() / self.getCellSize()
             self.getScreen().blit(accusesText, ((text_x + 0.25) * self.getCellSize(), position[1] * self.getCellSize()))
-            
+    
+    def drawPopUpVotingResult(self):
+        margin = 4
+        row_size = 2
+        col_size = 5
+        
+        board_size = self.getBoard().getSize()
+        max_rows = board_size / row_size - margin
+
+        cols = len(self.getGame().getAgents()) // max_rows + 1
+        rows = len(self.getGame().getAgents()) // cols
+
+        center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
+        box_size = (cols * col_size * self.getCellSize(), rows * row_size * self.getCellSize())
+        box_position = (center[0] - box_size[0] / 2, center[1] - box_size[1] / 2)
+        
+        box_size_background = (cols * col_size * self.getCellSize() + (row_size * self.getCellSize() /3), rows * row_size * self.getCellSize() + row_size * self.getCellSize())
+        box_position_background = (center[0] - box_size_background[0] / 2, center[1] - box_size_background[1] / 2 - (row_size * self.getCellSize() / 3))
+        
+        pygame.draw.rect(self.getScreen(), (161, 102, 47), (box_position_background, box_size_background))
+        pygame.draw.rect(self.getScreen(), (216, 181, 137), (box_position, box_size))
+        
+        votes = self.getGame().getNumberOfVotes()
+        new_font = pygame.font.SysFont("arialblack", self.getCellSize())
+        votingText = new_font.render("Final Voting Result", True, (0,0,0))
+        
+        self.getScreen().blit(votingText, (box_position[0], box_position_background[1] + row_size * self.getCellSize()/ 6))
+        
+        # Draw accused sprite
+        accused = self.getGame().getMostAccused()
+        position = (center[0] / self.getCellSize(), center[1] / self.getCellSize())
+        self.getAgentSprites()[accused.getId()].drawToBigger(self.getScreen(), position[0], position[1], (2, 3.5))
+        
+        # Draw ban text
+        ban_font = pygame.font.SysFont("arialblack", self.getCellSize() * 3 // 2)
+        ban_text = ban_font.render("Should he be banned?", True, (0,0,0))
+        ban_text_x = position[0] - (ban_text.get_width() / (self.getCellSize() * 2))
+        ban_text_y = position[1] - self.getAgentSprites()[accused.getId()].getHeight() * 4 / self.getCellSize()
+        self.getScreen().blit(ban_text, (ban_text_x * self.getCellSize(), ban_text_y * self.getCellSize()))
+
+        # Draw voting results text
+        votes_text = new_font.render(f"YES: {votes[0]} NO: {votes[1]}", True, (0,0,0))
+        votes_text_x = position[0]  - (votes_text.get_width() / (self.getCellSize() * 2))
+        votes_text_y = position[1] + self.getAgentSprites()[accused.getId()].getHeight() / self.getCellSize()
+        self.getScreen().blit(votes_text, (votes_text_x * self.getCellSize(), votes_text_y * self.getCellSize()))
+        
+        # Decide if the accused is guilty or innocent     
+        if votes[0] > votes[1]:
+            text = f"Sir {accused.getId()} is guilty!"
+            self.getJailSprite().drawToBigger(self.getScreen(), position[0], position[1], (2, 2))
+        else:
+            text = f"Sir {accused.getId()} is innocent!"
+        
+        # Draw result text    
+        result_text = new_font.render(text, True, (0,0,0))
+        result_text_x = position[0]  - (result_text.get_width() / (self.getCellSize() * 2))
+        result_text_y = votes_text_y + result_text.get_height() / self.getCellSize()
+        self.getScreen().blit(result_text, (result_text_x * self.getCellSize(), result_text_y * self.getCellSize()))
+        
+        
