@@ -8,6 +8,7 @@ class Board:
     def __init__(self, size):
         self.size = size
         self.cells = [[self.Cell() for i in range(size)] for j in range(size)]
+        self.numberOfResources = 0
 
     ###########################
     ###     Inner Class     ###
@@ -181,6 +182,14 @@ class Board:
 
         for (i, j) in growth_positions:
             self.putResource(i, j)
+            
+    def getNumberOfResources(self):
+        self.numberOfResources = 0
+        for i in range(self.getSize()):
+            for j in range(self.getSize()):
+                if self.hasResource(i, j):
+                    self.numberOfResources += 1
+        return self.numberOfResources
 
     def moveAgent(self, old_i, old_j, new_i, new_j):
         if not self.withinBounds(old_i, old_j) or not self.withinBounds(new_i, new_j):

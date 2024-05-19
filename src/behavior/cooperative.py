@@ -50,7 +50,9 @@ class CooperativeBehavior(Behavior):
     def computeSustainableConsumption(self, num_players : int):
         board = self.getAgent().getView()
         boardsize = board.getSize()
-        num_apples = board.getNumApples()
+        num_apples = board.getNumberOfResources()
+        if num_apples == 0:
+            return 0 #idk what number to return in this case
 
         sustainable_consumption = num_apples + (self.getGrowthFrequency()) * num_apples / (boardsize - num_apples)
         sustainable_consumption = sustainable_consumption / (2 * num_players)
