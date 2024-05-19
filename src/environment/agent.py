@@ -75,7 +75,7 @@ class Agent:
 
     def pathToClosestApple(self):
         """Considers the entire view """
-        return self.getView().shortestPath(self.getPosition())
+        return self.getView().shortestPath(self.getPosition()[0], self.getPosition()[1])
 
     def closestAppleInRadius(self):
         """Considers only the agent's sight radius"""
