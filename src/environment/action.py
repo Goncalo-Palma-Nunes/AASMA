@@ -1,6 +1,6 @@
 import abc
-from src.environment.board import Board
-from src.environment.agent import Agent
+from environment.board import Board
+from environment.agent import Agent
 
 #######################
 ###    Constants    ###

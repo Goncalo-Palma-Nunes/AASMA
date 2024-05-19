@@ -1,6 +1,6 @@
 import abc
-from src.environment.agent import Agent
-from src.environment.action import Action
+from environment.agent import Agent
+from environment.action import Action
 
 class Behavior:
     ###########################
