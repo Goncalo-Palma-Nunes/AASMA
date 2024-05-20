@@ -11,6 +11,9 @@ class GreedyBehavior(CooperativeBehavior):
         super().__init__(growthFrequency)
         self.gather = Gather()
 
+    def getColor(self):
+        return "purple"
+
     def anyAgentsInRadius(self):
         i, j = self.getPosition()
         radius = self.getAgent().getSightRadius()

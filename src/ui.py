@@ -91,8 +91,8 @@ class UI:
         return self.jail_sprite
     
     def setSlimeSprites(self, cell_size, sprite_scale):
-        slime_sprites = ["slime_bluegreen.png", "slime_gold.png", "slime_pink.png", "slime_purple.png"]
-        self.slime_sprites = [CellSprite.fromFile(cell_size, sprite_scale, f"assets/{name}") for name in slime_sprites]
+        slime_sprites = {"blue": "slime_bluegreen.png", "gold": "slime_gold.png", "pink": "slime_pink.png", "purple": "slime_purple.png"}
+        self.slime_sprites = {name: CellSprite.fromFile(cell_size, sprite_scale, f"assets/{path}") for (name, path) in slime_sprites.items()}
 
     def getSlimeSprites(self):   
         return self.slime_sprites
@@ -111,7 +111,7 @@ class UI:
             image_offset = (min(0, self.getCellSize() - id_text.get_rect().width) / 2, -id_text.get_rect().height)
 
             image = pygame.Surface(image_size, pygame.SRCALPHA, 32)
-            image.blit(self.getSlimeSprites()[0].getImage(), (-image_offset[0], -image_offset[1]))
+            image.blit(self.getSlimeSprites()[agent.getColor()].getImage(), (-image_offset[0], -image_offset[1]))
             image.blit(id_text, ((image_size[0] - id_text.get_rect().width) / 2, 0))
 
             self.agent_sprites[agent.getId()] = CellSprite(self.getCellSize(), image, offset=(0, image_offset[1]))

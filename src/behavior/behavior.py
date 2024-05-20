@@ -38,6 +38,10 @@ class Behavior:
     def getGrowthFrequency(self):
         return self.growthFrequency
 
+    @abc.abstractmethod
+    def getColor(self):
+        pass
+
     ###########################
     ###       Methods       ###
     ###########################

@@ -13,10 +13,8 @@ class CooperativeBehavior(Behavior):
         self.plan = Plan()
         self.target_position = None
 
-
-    ###########################
-    ###       Methods       ###
-    ###########################
+    def getColor(self):
+        return "pink"
 
     def getPlan(self):
         return self.plan

@@ -9,6 +9,13 @@ class RandomBehavior(Behavior):
         self.known_agents = set()
 
     ###########################
+    ### Getters and Setters ###
+    ###########################
+
+    def getColor(self):
+        return "bluegreen"
+
+    ###########################
     ###       Methods       ###
     ###########################
 

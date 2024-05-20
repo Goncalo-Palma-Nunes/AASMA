@@ -39,6 +39,9 @@ class Agent:
     
     def getBehavior(self):
         return self.behavior
+
+    def getColor(self):
+        return self.behavior.getColor()
     
     def getView(self):
         return self.view
