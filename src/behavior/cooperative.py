@@ -40,8 +40,6 @@ class CooperativeBehavior(GreedyBehavior):
         # Allow eating excess resources.
         sustainable_consumption += max(0, resource_count - ideal_count)
 
-        print("Growth: ", growth, "Count: ", resource_count, " Ideal Growth: ", ideal_growth, " Ideal Count: ", ideal_count, " Sustainable Consumption: ", sustainable_consumption)
-
         # We return the sustainable consumption per agent.
         return floor(sustainable_consumption / (len(self.getKnownAgents()) + 1))
 

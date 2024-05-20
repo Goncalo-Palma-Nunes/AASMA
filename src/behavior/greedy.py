@@ -17,7 +17,6 @@ class GreedyBehavior(Behavior):
     def moveTowardsClosestResource(self, view):
         if self.target_position is None or not view.hasResource(self.target_position[0], self.target_position[1]):
             self.target_position = view.getClosestResource(self.getPosition())
-            print(self.target_position)
             if self.target_position is None:
                 return Move.random()
 
