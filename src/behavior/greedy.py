@@ -47,10 +47,8 @@ class GreedyBehavior(Behavior):
             return accused
         return None
 
-    def vote(self, accused_actions, accused):
+    def vote(self, consumption, accused):
         # Votes true if it has seen the accused agent gathering more than itself
-        # print("Accused Actions: ", accused_actions)
-        # print("Agent Endowment: ", self.getAgent().getRoundEndowment())
-        # print("Accused: ", accused)
-        # print("seen_gathers: ", len(self.getAgent().getSeenGathers(accused)))
-        return len(self.getAgent().getSeenGathers(accused)) > self.getAgent().getRoundEndowment()
+        if accused == self.getAgent():
+            return False
+        return len(consumption) > self.getAgent().getRoundEndowment()
