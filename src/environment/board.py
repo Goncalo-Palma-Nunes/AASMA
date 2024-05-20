@@ -8,7 +8,6 @@ class Board:
     def __init__(self, size):
         self.size = size
         self.cells = [[self.Cell() for i in range(size)] for j in range(size)]
-        self.numberOfResources = 0
 
     ###########################
     ###     Inner Class     ###
@@ -184,12 +183,12 @@ class Board:
             self.putResource(i, j)
             
     def getNumberOfResources(self):
-        self.numberOfResources = 0
+        numberOfResources = 0
         for i in range(self.getSize()):
             for j in range(self.getSize()):
                 if self.hasResource(i, j):
-                    self.numberOfResources += 1
-        return self.numberOfResources
+                    numberOfResources += 1
+        return numberOfResources
 
     def moveAgent(self, old_i, old_j, new_i, new_j):
         if not self.withinBounds(old_i, old_j) or not self.withinBounds(new_i, new_j):
@@ -320,6 +319,35 @@ class Board:
                         parent[(i, j + 1)] = (i, j)
         # If no path is found, return an empty list
         return []
+
+    def getClosestResource(self, position, radius=None):
+        """Return the closest position with a resource to the given position."""
+
+        if radius is None:
+            radius = self.getSize()
+        min_distance = float('inf')
+
+        for i in range(self.getSize()):
+            for j in range(self.getSize()):
+                if self.hasResource(i, j):
+                    distance = self.manhattanDistance(position[0], position[1], i, j)
+                    if distance < min_distance:
+                        min_distance = distance
+                        closest_position = (i, j)
+
+        if min_distance <= radius:
+            return closest_position
+        else:
+            return None
+
+    def anyAgentsInRadius(self, position, radius):
+        i, j = position
+        for k in range(i - radius, i + radius + 1):
+            for l in range(j - radius, j + radius + 1):
+                if self.withinBounds(k, l) and self.hasAgent(k, l):
+                    if k != i or l != j:
+                        return True
+        return False
 
     def __str__(self):
         output = "Size: " + str(self.getSize()) + "\n" + \

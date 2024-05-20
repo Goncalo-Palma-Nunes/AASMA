@@ -1,50 +1,57 @@
-from environment import Gather, UP, DOWN, LEFT, RIGHT, Move
-from .random import RandomBehavior
-from .cooperative import CooperativeBehavior
-from environment.agent import Agent
-from environment.board import Board
+from environment import Gather, Move
+from .behavior import Behavior, Plan
 
-import random
-
-class GreedyBehavior(CooperativeBehavior):
+class GreedyBehavior(Behavior):
     def __init__(self, growthFrequency):
         super().__init__(growthFrequency)
-        self.gather = Gather()
+        self.known_agents = set()
+        self.plan = Plan()
+        self.target_position = None
 
     def getColor(self):
         return "purple"
 
-    def anyAgentsInRadius(self):
-        i, j = self.getPosition()
-        radius = self.getAgent().getSightRadius()
-        for k in range(i - radius, i + radius + 1):
-            for l in range(j - radius, j + radius + 1):
-                if self.getAgent().getView().withinBounds(k, l) and \
-                    self.getAgent().getView().hasAgent(k, l):
-                    return True
-        return False
+    def getKnownAgents(self):
+        return self.known_agents
+
+    def moveTowardsClosestResource(self, view):
+        if self.target_position is None or not view.hasResource(self.target_position[0], self.target_position[1]):
+            self.target_position = view.getClosestResource(self.getPosition())
+            print(self.target_position)
+            if self.target_position is None:
+                return Move.random()
+
+        return Move.fromTo(self.getPosition(), self.target_position)
 
     def act(self, view, seen_actions):
         for agent, action in seen_actions:
             self.known_agents.add(agent)
 
-        if self.anyAgentsInRadius():
-            return super().act(view, seen_actions)
-        
         if view.hasResource(self.getPosition()[0], self.getPosition()[1]):
             return Gather()
-        
-        if self.getPlan().isEmpty() or not self.targetStillValid():
-            self.getPlan().definePlan(self.getAgent().pathToClosestApple())
-            if self.getPlan().isEmpty():
-                return super().moveRandomly()
-            
-            self.setTargetPosition(self.getPlan().getTarget())
 
-        return Move(self.positionToDirection(self.getPlan().next()))
+        return self.moveTowardsClosestResource(view)
 
     def accuse(self):
-        return super().accuse()
+        if self.known_agents:
+            # Accuse the one agent seen to have eaten more by iterating
+            # through the agent's seen_gathers dictionary and comparing the
+            # number of seen gathers
+            accused = None
+            accused_actions = -1
+            for agent in self.known_agents:
+                seen_gathers = self.getAgent().getSeenGathers(agent)
+                if len(seen_gathers) > accused_actions:
+                    accused = agent
+                    accused_actions = len(seen_gathers)
+
+            return accused
+        return None
 
     def vote(self, accused_actions, accused):
-        return super().vote(accused_actions, accused)
+        # Votes true if it has seen the accused agent gathering more than itself
+        # print("Accused Actions: ", accused_actions)
+        # print("Agent Endowment: ", self.getAgent().getRoundEndowment())
+        # print("Accused: ", accused)
+        # print("seen_gathers: ", len(self.getAgent().getSeenGathers(accused)))
+        return len(self.getAgent().getSeenGathers(accused)) > self.getAgent().getRoundEndowment()

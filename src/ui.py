@@ -172,7 +172,8 @@ class UI:
                     
             # Draw player and accused sprites
             self.getAgentSprites()[player.getId()].drawTo(self.getScreen(), position[0], position[1])
-            self.getAgentSprites()[accused.getId()].drawTo(self.getScreen(), position[0] + col_size - (self.getAgentSprites()[accused.getId()].getWidth() / self.getCellSize()), position[1])
+            if accused is not None:
+                self.getAgentSprites()[accused.getId()].drawTo(self.getScreen(), position[0] + col_size - (self.getAgentSprites()[accused.getId()].getWidth() / self.getCellSize()), position[1])
 
             # Draw text
             text_x = (2 * position[0] + col_size) / 2  - (accuses_text.get_width() / (self.getCellSize() * 2))

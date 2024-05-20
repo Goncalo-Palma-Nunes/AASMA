@@ -1,4 +1,4 @@
-from behavior import RandomBehavior, GreedyBehavior, CooperativeBehavior
+from behavior import RandomBehavior, GreedyBehavior, CooperativeBehavior, AdversarialBehavior
 from environment import Game
 from ui import CellSprite, UI
 
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     sight_radius = 4
     num_rounds = 100
     num_turns = 50 # Turns per round
-    turn_time = 25 # Milliseconds per game turn
+    turn_time = 50 # Milliseconds per game turn
     accusation_individual_time = 2000 # Milliseconds the accusation screen is shown
     accusation_ranking_time = 2000 # Milliseconds the accusation results screen is shown
     voting_individual_time = 2000 # Milliseconds the voting screen is shown
@@ -25,6 +25,7 @@ if __name__ == "__main__":
 
     # Initialize behaviors and environment
     # behaviors = [RandomBehavior(resource_growth_frequency) for i in range(agent_count)]
+    # behaviors = [AdversarialBehavior(resource_growth_frequency) for i in range(agent_count)]
     # behaviors = [CooperativeBehavior(resource_growth_frequency) for i in range(agent_count)]
     behaviors = [GreedyBehavior(resource_growth_frequency) for i in range(agent_count)]
     game = Game(board_size, behaviors, sight_radius, resource_frequency, resource_growth_frequency, num_rounds, num_turns)

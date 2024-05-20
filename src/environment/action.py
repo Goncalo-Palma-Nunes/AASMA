@@ -1,6 +1,5 @@
 import abc
-# from environment.board import Board
-# from environment.agent import Agent
+import random
 
 #######################
 ###    Constants    ###
@@ -34,6 +33,23 @@ class Move(Action):
 
     def __init__(self, direction):
         self.direction = direction
+
+    @staticmethod
+    def random():
+        return Move(random.choice([UP, DOWN, LEFT, RIGHT]))
+
+    @staticmethod
+    def fromTo(from_position, to_position):
+        if from_position[0] < to_position[0]:
+            return Move(RIGHT)
+        elif from_position[0] > to_position[0]:
+            return Move(LEFT)
+        elif from_position[1] < to_position[1]:
+            return Move(DOWN)
+        elif from_position[1] > to_position[1]:
+            return Move(UP)
+        else:
+            return None
 
     ###########################
     ###       Methods       ###
