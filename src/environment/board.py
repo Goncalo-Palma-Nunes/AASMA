@@ -76,7 +76,7 @@ class Board:
             
             if other.getTimestamp() > self.getTimestamp():
                 self.setResource(other.hasResource())
-                self.setAgent(other.hasAgent())
+                self.setAgent(other.getAgent())
                 self.setTimestamp(other.getTimestamp())
 
         ###########################
