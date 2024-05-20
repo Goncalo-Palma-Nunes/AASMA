@@ -1,6 +1,6 @@
 from behavior import RandomBehavior, GreedyBehavior, CooperativeBehavior, AdversarialBehavior
 from environment import Game
-from ui import CellSprite, UI
+from ui import UI
 
 import pygame
 

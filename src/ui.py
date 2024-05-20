@@ -2,6 +2,7 @@ from typing import Any
 from environment import Game
 
 import pygame
+import math
 
 class CellSprite:
     def __init__(self, cell_size, image, offset=(0,0)):
@@ -141,8 +142,8 @@ class UI:
         board_size = self.getBoard().getSize()
         max_rows = board_size / row_size - margin
 
-        cols = len(self.getGame().getAgents()) // max_rows + 1
-        rows = len(self.getGame().getAgents()) // cols
+        cols = max(3, math.ceil(len(self.getGame().getAgents()) / max_rows) + 1)   
+        rows = max(6, math.ceil(len(self.getGame().getAgents()) / cols)) 
 
         center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
         box_size = (cols * col_size * self.getCellSize(), rows * row_size * self.getCellSize())
@@ -163,6 +164,7 @@ class UI:
         for player, accused in self.getGame().getAccusations().items():
             i = player.getId() // rows
             j = player.getId() % rows
+            #print("i", i, "j", j, "rows", rows, "cols", cols)
             position = ((box_position[0] + i * col_size * self.getCellSize()) / self.getCellSize(), (box_position[1] + j * row_size * self.getCellSize()) / self.getCellSize() + 1)
                     
             # Draw accusation boxes
@@ -187,9 +189,9 @@ class UI:
         board_size = self.getBoard().getSize()
         max_rows = board_size / row_size - margin
 
-        cols = len(self.getGame().getAgents()) // max_rows + 1
-        rows_background = len(self.getGame().getAgents()) // cols
-        rows = (len(self.getGame().getAgents()) /2) // cols
+        cols = max(3, math.ceil(len(self.getGame().getAgents()) / max_rows) + 1)   
+        rows = max(6, math.ceil((len(self.getGame().getAgents())) / cols)) / 2
+        rows_background = max(6, math.ceil(len(self.getGame().getAgents()) / cols))
 
         center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
         upper_box_size = (cols * col_size * self.getCellSize(), rows * row_size * self.getCellSize())
@@ -210,12 +212,14 @@ class UI:
         
         self.getScreen().blit(accusation_text, (upper_box_position[0], box_position_background[1] + row_size * self.getCellSize()/ 6))
         
-        for rank in range(1, len(self.getGame().getOrderedAccusedList())):
+        for rank in range(1, len(self.getGame().getOrderedAccusedList()) + 1):
+            rows = math.floor(rows)
             player_tuple = list(self.getGame().getOrderedAccusedList().items())[rank-1]
             i = (rank-2) // rows
             j = (rank-2) % rows
+
             text = f"Top {rank}: {player_tuple[1]} votes"
-            if i > rows -1 or j > rows -1 or player_tuple[0] is None:
+            if i > cols -1 or player_tuple[0] is None:
                 break
             elif rank == 1:
                 # Draw player and hammer sprite
@@ -249,8 +253,8 @@ class UI:
         board_size = self.getBoard().getSize()
         max_rows = board_size / row_size - margin
 
-        cols = len(self.getGame().getAgents()) // max_rows + 1
-        rows = len(self.getGame().getAgents()) // cols
+        cols = max(3, math.ceil(len(self.getGame().getAgents()) / max_rows) + 1)   
+        rows = max(6, math.ceil((len(self.getGame().getAgents())) / cols)) 
 
         center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
         box_size = (cols * col_size * self.getCellSize(), rows * row_size * self.getCellSize())
@@ -297,8 +301,8 @@ class UI:
         board_size = self.getBoard().getSize()
         max_rows = board_size / row_size - margin
 
-        cols = len(self.getGame().getAgents()) // max_rows + 1
-        rows = len(self.getGame().getAgents()) // cols
+        cols = max(3, math.ceil(len(self.getGame().getAgents()) / max_rows) + 1)   
+        rows = max(6, math.ceil((len(self.getGame().getAgents())) / cols))
 
         center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
         box_size = (cols * col_size * self.getCellSize(), rows * row_size * self.getCellSize())
@@ -312,7 +316,7 @@ class UI:
         
         votes = self.getGame().getNumberOfVotes()
         new_font = pygame.font.SysFont("arialblack", self.getCellSize())
-        voting_text = new_font.render("Final Voting Result", True, (0,0,0))
+        voting_text = new_font.render("Voting Result", True, (0,0,0))
 
         self.getScreen().blit(voting_text, (box_position[0], box_position_background[1] + row_size * self.getCellSize()/ 6))
         
@@ -323,9 +327,9 @@ class UI:
         
         # Draw ban text
         ban_font = pygame.font.SysFont("arialblack", self.getCellSize() * 3 // 2)
-        ban_text = ban_font.render("Should he be banned?", True, (0,0,0))
+        ban_text = ban_font.render("Ban?", True, (0,0,0))
         ban_text_x = position[0] - (ban_text.get_width() / (self.getCellSize() * 2))
-        ban_text_y = position[1] - self.getAgentSprites()[accused.getId()].getHeight() * 4 / self.getCellSize()
+        ban_text_y = position[1] - self.getAgentSprites()[accused.getId()].getHeight() * 3 / self.getCellSize()
         self.getScreen().blit(ban_text, (ban_text_x * self.getCellSize(), ban_text_y * self.getCellSize()))
 
         # Draw voting results text
