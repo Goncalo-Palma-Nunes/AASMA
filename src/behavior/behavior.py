@@ -13,9 +13,8 @@ class Behavior:
     ###     Constructor     ###
     ###########################
 
-    def __init__(self, growthFrequency):
+    def __init__(self):
         self.agent = None
-        self.growthFrequency = growthFrequency
 
     ###########################
     ### Getters and Setters ###
@@ -26,17 +25,11 @@ class Behavior:
             raise ValueError("This behavior is already assigned to an agent.")
         self.agent = agent
 
-    def setGrowthFrequency(self, growthFrequency):
-        self.growthFrequency = growthFrequency
-
     def getAgent(self):
         return self.agent
 
     def getPosition(self):
         return self.agent.getPosition()
-    
-    def getGrowthFrequency(self):
-        return self.growthFrequency
 
     @abc.abstractmethod
     def getColor(self):

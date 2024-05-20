@@ -4,8 +4,8 @@ from environment import Gather, Move, UP, DOWN, LEFT, RIGHT
 import random
 
 class RandomBehavior(Behavior):
-    def __init__(self, growthFrequency):
-        super().__init__(growthFrequency)
+    def __init__(self):
+        super().__init__()
         self.known_agents = set()
 
     ###########################
@@ -13,7 +13,7 @@ class RandomBehavior(Behavior):
     ###########################
 
     def getColor(self):
-        return "bluegreen"
+        return "blue"
 
     ###########################
     ###       Methods       ###

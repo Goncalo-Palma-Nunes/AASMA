@@ -2,8 +2,8 @@ from environment import Gather, Move
 from .behavior import Behavior, Plan
 
 class GreedyBehavior(Behavior):
-    def __init__(self, growthFrequency):
-        super().__init__(growthFrequency)
+    def __init__(self):
+        super().__init__()
         self.known_agents = set()
         self.plan = Plan()
         self.target_position = None

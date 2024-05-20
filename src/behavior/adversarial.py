@@ -2,8 +2,8 @@ from environment import Gather
 from .cooperative import CooperativeBehavior
 
 class AdversarialBehavior(CooperativeBehavior):
-    def __init__(self, growthFrequency):
-        super().__init__(growthFrequency)
+    def __init__(self, growth_frequency):
+        super().__init__(growth_frequency)
         self.gather = Gather()
 
     def getColor(self):

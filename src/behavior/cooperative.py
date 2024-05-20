@@ -2,8 +2,9 @@ from environment import Gather, Move
 from .greedy import GreedyBehavior
 
 class CooperativeBehavior(GreedyBehavior):
-    def __init__(self, growthFrequency):
-        super().__init__(growthFrequency)
+    def __init__(self, growth_frequency):
+        super().__init__()
+        self.growth_frequency = growth_frequency
 
     def getColor(self):
         return "pink"
@@ -21,7 +22,7 @@ class CooperativeBehavior(GreedyBehavior):
             sustainable_consumption = num_resources / (4 * num_agents) 
             return sustainable_consumption
 
-        sustainable_consumption = num_resources + (self.getGrowthFrequency()) * num_resources / (view.getSize() - num_resources)
+        sustainable_consumption = num_resources + self.growth_frequency * num_resources / (view.getSize() - num_resources)
         sustainable_consumption = sustainable_consumption / (2 * num_agents)
 
         return sustainable_consumption
