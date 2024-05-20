@@ -124,6 +124,21 @@ class Board:
     ###       Methods       ###
     ###########################
 
+    def estimateResourceGrowth(self, growth_frequency):
+        count = 0
+        for i in range(self.getSize()):
+            for j in range(self.getSize()):
+                if not self.hasResource(i, j):
+                    count += min(1, self.countNeighborResources(i, j) * growth_frequency)
+        return count
+
+    def getIdealResourceGrowthAndCount(self, growth_frequency):
+        # This would happen on a checkerboard pattern where each resource has 4 empty spaces around it.
+        # There would be a total of size^2 / 4 empty cells, each with on average 4 neighbors.
+        growth = (self.getSize() ** 2) * growth_frequency
+        count = (self.getSize() ** 2) / 4
+        return (growth, count)
+
     def manhattanDistance(self, i1, j1, i2, j2):
         return abs(i1 - i2) + abs(j1 - j2)
 

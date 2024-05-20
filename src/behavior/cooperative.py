@@ -1,5 +1,16 @@
+from math import floor
 from environment import Gather, Move
 from .greedy import GreedyBehavior
+
+###########################
+###      Constants      ###
+###########################
+
+# The growth cooperative agents should aim for, as a fraction of the ideal growth.
+IDEAL_GROWTH_FACTOR = 0.8
+
+# The fraction of the growth that can be consumed even when the growth is less than the ideal growth.
+SUSTAINABLE_CONSUMPTION_FRACTION = 0.2
 
 class CooperativeBehavior(GreedyBehavior):
     def __init__(self, growth_frequency):
@@ -10,22 +21,29 @@ class CooperativeBehavior(GreedyBehavior):
         return "pink"
 
     def computeSustainableConsumption(self, view):
-        num_resources = view.getNumberOfResources()
-        num_agents = len(self.getKnownAgents())
+        # Count the number of resources
+        resource_count = view.getResourceCount()
 
-        if num_resources == 0:
-            return 0 
-        if num_agents == 0:
-            return 1
-        if (view.getSize() - num_resources) == 0:
-            # Few resources, so they should be more conservative
-            sustainable_consumption = num_resources / (4 * num_agents) 
-            return sustainable_consumption
+        # Estimate the number of resources that will grow next round
+        growth = view.estimateResourceGrowth(self.growth_frequency)
+        
+        # Estimate the ideal growth of resources.
+        (ideal_growth, ideal_count) = view.getIdealResourceGrowthAndCount(self.growth_frequency)
 
-        sustainable_consumption = num_resources + self.growth_frequency * num_resources / (view.getSize() - num_resources)
-        sustainable_consumption = sustainable_consumption / (2 * num_agents)
+        if growth < IDEAL_GROWTH_FACTOR * ideal_growth:
+            # If the growth is less than the ideal growth, then the population should only eat a fraction of the growth.
+            sustainable_consumption = growth * SUSTAINABLE_CONSUMPTION_FRACTION
+        else:
+            # Otherwise, its safe to consume all the growth.
+            sustainable_consumption = growth
 
-        return sustainable_consumption
+        # Allow eating excess resources.
+        sustainable_consumption += max(0, resource_count - ideal_count)
+
+        print("Growth: ", growth, "Count: ", resource_count, " Ideal Growth: ", ideal_growth, " Ideal Count: ", ideal_count, " Sustainable Consumption: ", sustainable_consumption)
+
+        # We return the sustainable consumption per agent.
+        return floor(sustainable_consumption / (len(self.getKnownAgents()) + 1))
 
     def act(self, view, seen_actions):
         for agent, action in seen_actions:

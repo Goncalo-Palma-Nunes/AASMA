@@ -14,20 +14,20 @@ if __name__ == "__main__":
     resource_growth_frequency = 0.2
     sight_radius = 4
     num_rounds = 100
-    num_turns = 50 # Turns per round
-    turn_time = 50 # Milliseconds per game turn
-    accusation_individual_time = 2000 # Milliseconds the accusation screen is shown
-    accusation_ranking_time = 2000 # Milliseconds the accusation results screen is shown
-    voting_individual_time = 2000 # Milliseconds the voting screen is shown
-    voting_result_time = 2000 # Milliseconds the voting results screen is shown
+    num_turns = 25 # Turns per round
+    turn_time = 25 # Milliseconds per game turn
+    accusation_individual_time = 100 # Milliseconds the accusation screen is shown
+    accusation_ranking_time = 100 # Milliseconds the accusation results screen is shown
+    voting_individual_time = 100 # Milliseconds the voting screen is shown
+    voting_result_time = 100 # Milliseconds the voting results screen is shown
 
     agent_count = 50
 
     # Initialize behaviors and environment
-    # behaviors = [RandomBehavior(resource_growth_frequency) for i in range(agent_count)]
+    # behaviors = [RandomBehavior() for i in range(agent_count)]
     # behaviors = [AdversarialBehavior(resource_growth_frequency) for i in range(agent_count)]
-    # behaviors = [CooperativeBehavior(resource_growth_frequency) for i in range(agent_count)]
-    behaviors = [GreedyBehavior(resource_growth_frequency) for i in range(agent_count)]
+    behaviors = [CooperativeBehavior(resource_growth_frequency) for i in range(agent_count)]
+    # behaviors = [GreedyBehavior() for i in range(agent_count)]
     game = Game(board_size, behaviors, sight_radius, resource_frequency, resource_growth_frequency, num_rounds, num_turns)
 
     # Setup pygame
