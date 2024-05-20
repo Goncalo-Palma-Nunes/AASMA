@@ -40,16 +40,20 @@ class Move(Action):
 
     @staticmethod
     def fromTo(from_position, to_position):
+        choices = []
         if from_position[0] < to_position[0]:
-            return Move(RIGHT)
+            choices.append(RIGHT)
         elif from_position[0] > to_position[0]:
-            return Move(LEFT)
-        elif from_position[1] < to_position[1]:
-            return Move(DOWN)
+            choices.append(LEFT)
+        if from_position[1] < to_position[1]:
+            choices.append(DOWN)
         elif from_position[1] > to_position[1]:
-            return Move(UP)
+            choices.append(UP)
+
+        if choices:
+            return Move(random.choice(choices))
         else:
-            return None
+            return Move.random()
 
     ###########################
     ###       Methods       ###
