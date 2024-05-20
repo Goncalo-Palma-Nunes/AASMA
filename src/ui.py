@@ -5,6 +5,11 @@ import pygame
 import math
 
 class CellSprite:
+    
+    ###########################
+    ###     Constructor     ###
+    ###########################
+    
     def __init__(self, cell_size, image, offset=(0,0)):
         self.cell_size = cell_size
         self.image = image
@@ -21,6 +26,10 @@ class CellSprite:
 
         return CellSprite(cell_size, image)
 
+    ###########################
+    ### Getters and Setters ###
+    ###########################
+    
     def getImage(self):
         return self.image
     
@@ -29,6 +38,10 @@ class CellSprite:
     
     def getHeight(self):
         return self.image.get_height()
+    
+    ###########################
+    ###       Methods       ###
+    ###########################
 
     def drawTo(self, surface, i, j):
         surface.blit(self.image, (i * self.cell_size + self.offset[0], j * self.cell_size + self.offset[1]))
@@ -42,6 +55,11 @@ class CellSprite:
         
         
 class UI:
+    
+    ###########################
+    ###     Constructor     ###
+    ###########################
+    
     def __init__(self, game, screen, cell_size, sprite_scale):
         self.board = game.getBoard()
         self.screen = screen
@@ -54,7 +72,122 @@ class UI:
         self.setSlimeSprites(cell_size, sprite_scale)
         self.setHammerSprite(cell_size, sprite_scale)
         self.agent_sprites = {}
+        self.popup = self.PopUp(self.board.getSize(), len(self.game.getAgents()), self.getCellSize())
+    
+    ###########################
+    ###     Inner Class     ###
+    ###########################
         
+    class PopUp:
+        
+        ###########################
+        ###     Constructor     ###
+        ###########################
+    
+        def __init__(self, board_size, num_agents, cell_size):
+            self.margin = 4
+            self.row_size = 2
+            self.col_size = 5 
+            self.max_rows = board_size / self.row_size - self.margin
+            self.cols = max(3, math.ceil(num_agents / self.max_rows) + 1)   
+            self.rows = max(6, math.ceil(num_agents / self.cols))
+            self.center = None
+            self.box_size = None
+            self.box_position = None
+            self.box_size_background = None
+            self.box_position_background = None
+            self.cell_size = cell_size
+            self.upper_box_position = None
+        
+        ###########################
+        ### Getters and setters ###
+        ###########################
+            
+        def getMargin(self):
+            return self.margin  
+        
+        def getRowSize(self):
+            return self.row_size
+        
+        def getColSize(self):
+            return self.col_size
+        
+        def getMaxRows(self):
+            return self.max_rows
+        
+        def getCols(self):
+            return self.cols
+        
+        def getRows(self):
+            return self.rows
+        
+        def setRows(self, rows):
+            self.rows = rows
+        
+        def getCenter(self):
+            return self.center
+        
+        def getBoxSize(self):
+            return self.box_size
+        
+        def getBoxPosition(self):
+            return self.box_position
+        
+        def getBoxSizeBackground(self):
+            return self.box_size_background
+        
+        def getBoxPositionBackground(self):
+            return self.box_position_background
+        
+        def getCellSize(self):
+            return self.cell_size
+        
+        def getUpperBoxPosition(self):
+            return self.upper_box_position
+            
+        ###########################
+        ###       Methods       ###
+        ###########################
+        
+        def drawBackground(self, board_size, screen):
+            self.center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
+            self.box_size = (self.getCols() * self.getColSize() * self.getCellSize(), self.getRows() * self.getRowSize()  * self.getCellSize())
+            self.box_position = (self.center[0] - self.box_size[0] / 2, self.center[1] - self.box_size[1] / 2)
+            self.box_size_background = (self.getCols() * self.getColSize() * self.getCellSize() + (self.getRowSize() * self.getCellSize() / 3), self.getRows() * self.getRowSize() * self.getCellSize() + self.getRowSize() * self.getCellSize())
+            self.box_position_background = (self.center[0] - self.box_size_background[0] / 2, self.center[1] - self.box_size_background[1] / 2 - (self.getRowSize() * self.getCellSize() / 3))
+            
+            pygame.draw.rect(screen, (161, 102, 47), (self.box_position_background, self.box_size_background))
+            pygame.draw.rect(screen, (216, 181, 137), (self.box_position, self.box_size))
+            
+        def drawBackground2(self, board_size, screen, rows_background):
+            self.center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
+            upper_box_size = (self.getCols() * self.getColSize() * self.getCellSize(), self.getRows() * self.getRowSize()  * self.getCellSize())
+            self.upper_box_position = (self.center[0] - upper_box_size[0] /2, self.center[1] - upper_box_size[1])
+            self.box_size = (self.getCols() * self.getColSize() * self.getCellSize(), self.getRows() * self.getRowSize()  * self.getCellSize())
+            self.box_position = (self.center[0] - self.box_size[0] / 2, self.center[1])  
+            self.box_size_background = (self.getCols() * self.getColSize() * self.getCellSize() + (self.getRowSize() * self.getCellSize() / 3), rows_background * self.getRowSize() * self.getCellSize() + self.getRowSize() * self.getCellSize())
+            self.box_position_background = (self.center[0] - self.box_size_background[0] / 2, self.center[1] - self.box_size_background[1] / 2 - (self.getRowSize() * self.getCellSize() / 3))
+            
+            pygame.draw.rect(screen, (161, 102, 47), (self.box_position_background, self.box_size_background))
+            pygame.draw.rect(screen, (216, 181, 137), (self.upper_box_position, upper_box_size))
+            pygame.draw.rect(screen, (216, 181, 137), (self.box_position, self.box_size))
+            
+        def drawTitle(self, text, size, screen, pos1, pos2):
+            new_font = pygame.font.SysFont("arialblack", size)
+            text = new_font.render(text, True, (0,0,0))
+            screen.blit(text, (pos1, pos2 + self.getRowSize() * self.getCellSize()/ 6))
+            
+        def drawBoxes(self, screen, i, j):
+            small_box_size = (self.getColSize() * self.getCellSize(), self.getRowSize() * self.getCellSize())
+            small_box_position = (self.getBoxPosition()[0] + i * self.getColSize() * self.getCellSize(), self.getBoxPosition()[1] + j * self.getRowSize() * self.getCellSize())
+            pygame.draw.rect(screen, (161, 102, 47), (small_box_position, small_box_size), 1)
+            
+            return small_box_position
+            
+    ###########################
+    ### Getters and Setters ###
+    ###########################
+    
     def getBoard(self):
         return self.board
     
@@ -73,36 +206,39 @@ class UI:
     def setFont(self, font):
         self.font = font
         
+    def getAppleSprite(self):
+        return self.apple_sprite
+        
     def setAppleSprite(self, cell_size, sprite_scale):
         self.apple_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/apple.png")
         
-    def getAppleSprite(self):
-        return self.apple_sprite
+    def getGrassSprite(self):    
+        return self.grass_sprite
     
     def setGrassSprite(self, cell_size, sprite_scale):
         self.grass_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/grass.png")
         
-    def getGrassSprite(self):    
-        return self.grass_sprite
+    def getJailSprite(self):    
+        return self.jail_sprite
 
     def setJailSprite(self, cell_size, sprite_scale):
         self.jail_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/jail.png")
-    
-    def getJailSprite(self):    
-        return self.jail_sprite
+        
+    def getSlimeSprites(self):   
+        return self.slime_sprites
     
     def setSlimeSprites(self, cell_size, sprite_scale):
         slime_sprites = {"blue": "slime_bluegreen.png", "gold": "slime_gold.png", "pink": "slime_pink.png", "purple": "slime_purple.png"}
         self.slime_sprites = {name: CellSprite.fromFile(cell_size, sprite_scale, f"assets/{path}") for (name, path) in slime_sprites.items()}
-
-    def getSlimeSprites(self):   
-        return self.slime_sprites
+        
+    def getHammerSprite(self): 
+        return self.hammer_sprite
     
     def setHammerSprite(self, cell_size, sprite_scale):
         self.hammer_sprite = CellSprite.fromFile(cell_size, sprite_scale, "assets/hammer.png") 
     
-    def getHammerSprite(self): 
-        return self.hammer_sprite
+    def getAgentSprites(self):
+        return self.agent_sprites
         
     def setAgentSprites(self):
         for agent in self.getGame().getAgents():
@@ -116,9 +252,13 @@ class UI:
             image.blit(id_text, ((image_size[0] - id_text.get_rect().width) / 2, 0))
 
             self.agent_sprites[agent.getId()] = CellSprite(self.getCellSize(), image, offset=(0, image_offset[1]))
-            
-    def getAgentSprites(self):
-        return self.agent_sprites
+    
+    def getPopUp(self):
+        return self.popup
+    
+    ###########################
+    ###       Methods       ###
+    ###########################
     
     def drawBoard(self):
         for i in range(self.getBoard().getSize()):
@@ -135,95 +275,54 @@ class UI:
                         self.getJailSprite().drawTo(self.getScreen(), i, j)           
                                
     def drawPopUpAccusationList(self):
-        margin = 4
-        row_size = 2
-        col_size = 5
-        
         board_size = self.getBoard().getSize()
-        max_rows = board_size / row_size - margin
+        pop_up = self.getPopUp()
 
-        cols = max(3, math.ceil(len(self.getGame().getAgents()) / max_rows) + 1)   
-        rows = max(6, math.ceil(len(self.getGame().getAgents()) / cols)) 
-
-        center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
-        box_size = (cols * col_size * self.getCellSize(), rows * row_size * self.getCellSize())
-        box_position = (center[0] - box_size[0] / 2, center[1] - box_size[1] / 2)
-                
-        box_size_background = (cols * col_size * self.getCellSize() + (row_size * self.getCellSize() /3), rows * row_size * self.getCellSize() + row_size * self.getCellSize())
-        box_position_background = (center[0] - box_size_background[0] / 2, center[1] - box_size_background[1] / 2 - (row_size * self.getCellSize() / 3))
+        pop_up.drawBackground(board_size, self.getScreen())
         
-        pygame.draw.rect(self.getScreen(), (161, 102, 47), (box_position_background, box_size_background))
-        pygame.draw.rect(self.getScreen(), (216, 181, 137), (box_position, box_size))
-                
-        new_font = pygame.font.SysFont("arialblack", self.getCellSize())
+        pop_up.drawTitle("Accusation List", self.getCellSize(), self.getScreen(), pop_up.getBoxPosition()[0], pop_up.getBoxPositionBackground()[1])
         accuses_text = self.getFont().render("accuses", True, (0, 0, 0))
-        accusation_text = new_font.render("Accusation List", True, (0,0,0))
-
-        self.getScreen().blit(accusation_text, (box_position[0], box_position_background[1] + row_size * self.getCellSize()/ 6))
 
         for player, accused in self.getGame().getAccusations().items():
-            i = player.getId() // rows
-            j = player.getId() % rows
-            #print("i", i, "j", j, "rows", rows, "cols", cols)
-            position = ((box_position[0] + i * col_size * self.getCellSize()) / self.getCellSize(), (box_position[1] + j * row_size * self.getCellSize()) / self.getCellSize() + 1)
-                    
+            i = player.getId() // pop_up.getRows()
+            j = player.getId() % pop_up.getRows()
+            position = ((pop_up.getBoxPosition()[0] + i * pop_up.getColSize() * self.getCellSize()) / self.getCellSize(), (pop_up.getBoxPosition()[1] + j * pop_up.getRowSize() * self.getCellSize()) / self.getCellSize() + 1)
+            
             # Draw accusation boxes
-            accusation_box_size = (col_size * self.getCellSize(), row_size * self.getCellSize())
-            accusation_box_position = (box_position[0] + i * col_size * self.getCellSize(), box_position[1] + j * row_size * self.getCellSize())
-            pygame.draw.rect(self.getScreen(), (161, 102, 47), (accusation_box_position, accusation_box_size), 1)
-                    
+            pop_up.drawBoxes(self.getScreen(), i, j)
+            
             # Draw player and accused sprites
             self.getAgentSprites()[player.getId()].drawTo(self.getScreen(), position[0], position[1])
             if accused is not None:
-                self.getAgentSprites()[accused.getId()].drawTo(self.getScreen(), position[0] + col_size - (self.getAgentSprites()[accused.getId()].getWidth() / self.getCellSize()), position[1])
+                self.getAgentSprites()[accused.getId()].drawTo(self.getScreen(), position[0] + pop_up.getColSize() - (self.getAgentSprites()[accused.getId()].getWidth() / self.getCellSize()), position[1])
 
             # Draw text
-            text_x = (2 * position[0] + col_size) / 2  - (accuses_text.get_width() / (self.getCellSize() * 2))
+            text_x = (2 * position[0] + pop_up.getColSize()) / 2  - (accuses_text.get_width() / (self.getCellSize() * 2))
             self.getScreen().blit(accuses_text, (text_x * self.getCellSize(), position[1] * self.getCellSize()))
     
     def drawPopUpAccusationRanking(self):
-        margin = 4
-        row_size = 2
-        col_size = 5
-        
         board_size = self.getBoard().getSize()
-        max_rows = board_size / row_size - margin
-
-        cols = max(3, math.ceil(len(self.getGame().getAgents()) / max_rows) + 1)   
-        rows = max(6, math.ceil((len(self.getGame().getAgents())) / cols)) / 2
-        rows_background = max(6, math.ceil(len(self.getGame().getAgents()) / cols))
-
-        center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
-        upper_box_size = (cols * col_size * self.getCellSize(), rows * row_size * self.getCellSize())
-        upper_box_position = (center[0] - upper_box_size[0] /2, center[1] - upper_box_size[1])
+        pop_up = self.getPopUp()
         
-        bottom_box_size = (cols * col_size * self.getCellSize(), rows * row_size * self.getCellSize())
-        bottom_box_position = (center[0] - upper_box_size[0] /2, center[1])        
-        
-        box_size_background = (cols * col_size * self.getCellSize() + (row_size * self.getCellSize() /3), rows_background * row_size * self.getCellSize() + row_size * self.getCellSize())
-        box_position_background = (center[0] - box_size_background[0] / 2, center[1] - box_size_background[1] / 2 - (row_size * self.getCellSize() / 3))
-        
-        pygame.draw.rect(self.getScreen(), (161, 102, 47), (box_position_background, box_size_background))
-        pygame.draw.rect(self.getScreen(), (216, 181, 137), (upper_box_position, upper_box_size))
-        pygame.draw.rect(self.getScreen(), (216, 181, 137), (bottom_box_position, bottom_box_size))
+        pop_up.setRows(max(6, math.ceil((len(self.getGame().getAgents())) / pop_up.getCols())) / 2)
+        rows_background = max(6, math.ceil(len(self.getGame().getAgents()) / pop_up.getCols()))
+        pop_up.drawBackground2(board_size, self.getScreen(), rows_background)
+        pop_up.drawTitle("Accusation Ranking", self.getCellSize(), self.getScreen(), pop_up.getUpperBoxPosition()[0], pop_up.getBoxPositionBackground()[1])
         
         new_font = pygame.font.SysFont("arialblack", self.getCellSize())
-        accusation_text = new_font.render("Accusation Ranking", True, (0,0,0))
-        
-        self.getScreen().blit(accusation_text, (upper_box_position[0], box_position_background[1] + row_size * self.getCellSize()/ 6))
         
         for rank in range(1, len(self.getGame().getOrderedAccusedList()) + 1):
-            rows = math.floor(rows)
+            rows = math.floor(pop_up.getRows())
             player_tuple = list(self.getGame().getOrderedAccusedList().items())[rank-1]
             i = (rank-2) // rows
             j = (rank-2) % rows
 
             text = f"Top {rank}: {player_tuple[1]} votes"
-            if i > cols -1 or player_tuple[0] is None:
+            if i > pop_up.getCols() -1 or player_tuple[0] is None:
                 break
             elif rank == 1:
                 # Draw player and hammer sprite
-                position = (center[0] / self.getCellSize(), ((upper_box_position[1] + bottom_box_position[1]) /2) / self.getCellSize())
+                position = (pop_up.getCenter()[0] / self.getCellSize(), ((pop_up.getUpperBoxPosition()[1] + pop_up.getBoxPosition()[1]) /2) / self.getCellSize())
                 self.getAgentSprites()[player_tuple[0].getId()].drawToBigger(self.getScreen(), position[0], position[1], (2, 3.5))
                 self.hammer_sprite.drawTo(self.getScreen(), position[0] + self.getAgentSprites()[player_tuple[0].getId()].getWidth() / self.getCellSize(), position[1] - self.getAgentSprites()[player_tuple[0].getId()].getHeight() / self.getCellSize())
                 
@@ -232,56 +331,34 @@ class UI:
                 self.getScreen().blit(rank_text, ((position[0] - (rank_text.get_width() / (self.getCellSize() * 2))) * self.getCellSize(), (position[1] + self.getCellSize() / self.getCellSize()) * self.getCellSize()))
             else:
                 # Draw player sprites
-                position = ((bottom_box_position[0] + i * col_size * self.getCellSize()) / self.getCellSize(), (bottom_box_position[1] + j * row_size * self.getCellSize()) / self.getCellSize() + 1)
-                self.getAgentSprites()[player_tuple[0].getId()].drawTo(self.getScreen(), position[0] + col_size - (self.getAgentSprites()[player_tuple[0].getId()].getWidth() * 2/ self.getCellSize()), position[1])
+                position = ((pop_up.getBoxPosition()[0] + i * pop_up.getColSize() * self.getCellSize()) / self.getCellSize(), (pop_up.getBoxPosition()[1] + j * pop_up.getRowSize() * self.getCellSize()) / self.getCellSize() + 1)
+                self.getAgentSprites()[player_tuple[0].getId()].drawTo(self.getScreen(), position[0] + pop_up.getColSize() - (self.getAgentSprites()[player_tuple[0].getId()].getWidth() * 2/ self.getCellSize()), position[1])
                 
                 # Draw voting boxes
-                voting_box_size = (col_size * self.getCellSize(), row_size * self.getCellSize())
-                voting_box_position = (bottom_box_position[0] + i * col_size * self.getCellSize(), bottom_box_position[1] + j * row_size * self.getCellSize())
-                pygame.draw.rect(self.getScreen(), (161, 102, 47), (voting_box_position, voting_box_size), 1)
+                small_box_position = pop_up.drawBoxes(self.getScreen(), i, j)
 
                 # Draw text
                 rank_font = pygame.font.SysFont("arialblack", 10 * self.getCellSize() // 25)    
                 rank_text = rank_font.render(text, True, (0,0,0))
-                self.getScreen().blit(rank_text, (voting_box_position[0], voting_box_position[1]))
+                self.getScreen().blit(rank_text, (small_box_position[0], small_box_position[1]))
                 
-    def drawPopUpVotingList(self):
-        margin = 4
-        row_size = 2
-        col_size = 5
-        
+    def drawPopUpVotingList(self):      
         board_size = self.getBoard().getSize()
-        max_rows = board_size / row_size - margin
-
-        cols = max(3, math.ceil(len(self.getGame().getAgents()) / max_rows) + 1)   
-        rows = max(6, math.ceil((len(self.getGame().getAgents())) / cols)) 
-
-        center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
-        box_size = (cols * col_size * self.getCellSize(), rows * row_size * self.getCellSize())
-        box_position = (center[0] - box_size[0] / 2, center[1] - box_size[1] / 2)
-                
-        box_size_background = (cols * col_size * self.getCellSize() + (row_size * self.getCellSize() /3), rows * row_size * self.getCellSize() + row_size * self.getCellSize())
-        box_position_background = (center[0] - box_size_background[0] / 2, center[1] - box_size_background[1] / 2 - (row_size * self.getCellSize() / 3))
+        pop_up = self.getPopUp()
         
-        pygame.draw.rect(self.getScreen(), (161, 102, 47), (box_position_background, box_size_background))
-        pygame.draw.rect(self.getScreen(), (216, 181, 137), (box_position, box_size))
-                
-        new_font = pygame.font.SysFont("arialblack", self.getCellSize())
-        voting_text = new_font.render("Voting List", True, (0,0,0))
-
-        self.getScreen().blit(voting_text, (box_position[0], box_position_background[1] + row_size * self.getCellSize()/ 6))
+        pop_up.setRows(max(6, math.ceil((len(self.getGame().getAgents())) / pop_up.getCols())))
+        pop_up.drawBackground(board_size, self.getScreen())
+        pop_up.drawTitle("Voting List", self.getCellSize(), self.getScreen(), pop_up.getBoxPosition()[0], pop_up.getBoxPositionBackground()[1])
 
         for player, vote in self.getGame().getVotes().items():
-            i = player.getId() // rows
-            j = player.getId() % rows
-            position = ((box_position[0] + i * col_size * self.getCellSize()) / self.getCellSize(), (box_position[1] + j * row_size * self.getCellSize()) / self.getCellSize() + 1)
-                    
+            i = player.getId() // pop_up.getRows()
+            j = player.getId() % pop_up.getRows()
+            position = ((pop_up.getBoxPosition()[0] + i * pop_up.getColSize() * self.getCellSize()) / self.getCellSize(), (pop_up.getBoxPosition()[1] + j * pop_up.getRowSize() * self.getCellSize()) / self.getCellSize() + 1)
+            
             # Draw accusation boxes
-            accusation_box_size = (col_size * self.getCellSize(), row_size * self.getCellSize())
-            accusation_box_position = (box_position[0] + i * col_size * self.getCellSize(), box_position[1] + j * row_size * self.getCellSize())
-            pygame.draw.rect(self.getScreen(), (161, 102, 47), (accusation_box_position, accusation_box_size), 1)
+            pop_up.drawBoxes(self.getScreen(), i, j)
                     
-            # Draw player and accused sprites
+            # Draw player sprite
             self.getAgentSprites()[player.getId()].drawTo(self.getScreen(), position[0], position[1])
 
             # Draw text
@@ -294,35 +371,18 @@ class UI:
             self.getScreen().blit(accuses_text, ((text_x + 0.25) * self.getCellSize(), position[1] * self.getCellSize()))
     
     def drawPopUpVotingResult(self):
-        margin = 4
-        row_size = 2
-        col_size = 5
-        
         board_size = self.getBoard().getSize()
-        max_rows = board_size / row_size - margin
-
-        cols = max(3, math.ceil(len(self.getGame().getAgents()) / max_rows) + 1)   
-        rows = max(6, math.ceil((len(self.getGame().getAgents())) / cols))
-
-        center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
-        box_size = (cols * col_size * self.getCellSize(), rows * row_size * self.getCellSize())
-        box_position = (center[0] - box_size[0] / 2, center[1] - box_size[1] / 2)
+        pop_up = self.getPopUp()
         
-        box_size_background = (cols * col_size * self.getCellSize() + (row_size * self.getCellSize() /3), rows * row_size * self.getCellSize() + row_size * self.getCellSize())
-        box_position_background = (center[0] - box_size_background[0] / 2, center[1] - box_size_background[1] / 2 - (row_size * self.getCellSize() / 3))
+        pop_up.drawBackground(board_size, self.getScreen())
+        pop_up.drawTitle("Voting Result", self.getCellSize(), self.getScreen(), pop_up.getBoxPosition()[0], pop_up.getBoxPositionBackground()[1])
         
-        pygame.draw.rect(self.getScreen(), (161, 102, 47), (box_position_background, box_size_background))
-        pygame.draw.rect(self.getScreen(), (216, 181, 137), (box_position, box_size))
-        
-        votes = self.getGame().getNumberOfVotes()
         new_font = pygame.font.SysFont("arialblack", self.getCellSize())
-        voting_text = new_font.render("Voting Result", True, (0,0,0))
-
-        self.getScreen().blit(voting_text, (box_position[0], box_position_background[1] + row_size * self.getCellSize()/ 6))
+        votes = self.getGame().getNumberOfVotes()
         
         # Draw accused sprite
         accused = self.getGame().getMostAccused()
-        position = (center[0] / self.getCellSize(), center[1] / self.getCellSize())
+        position = (pop_up.getCenter()[0] / self.getCellSize(), pop_up.getCenter()[1] / self.getCellSize())
         self.getAgentSprites()[accused.getId()].drawToBigger(self.getScreen(), position[0], position[1], (2, 3.5))
         
         # Draw ban text
