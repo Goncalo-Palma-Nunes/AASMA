@@ -161,8 +161,6 @@ class Game:
         for accused in self.getAccusations().values():
             if accused in accusation_count:
                 accusation_count[accused] += 1
-            else:
-                accusation_count[accused] = 1
         return {k: v for k, v in sorted(accusation_count.items(), key=lambda item: item[1], reverse=True)}
     
     def getMostVoted(self):
