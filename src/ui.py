@@ -215,7 +215,7 @@ class UI:
             i = (rank-2) // rows
             j = (rank-2) % rows
             text = f"Top {rank}: {player_tuple[1]} votes"
-            if i > rows -1 or j > rows -1:
+            if i > rows -1 or j > rows -1 or player_tuple[0] is None:
                 break
             elif rank == 1:
                 # Draw player and hammer sprite
