@@ -16,6 +16,7 @@ class CooperativeBehavior(GreedyBehavior):
     def __init__(self, growth_frequency):
         super().__init__()
         self.growth_frequency = growth_frequency
+        self.sustainable_consumption = 0
 
     def getColor(self):
         return "pink"
@@ -41,7 +42,8 @@ class CooperativeBehavior(GreedyBehavior):
         sustainable_consumption += max(0, resource_count - ideal_count)
 
         # We return the sustainable consumption per agent.
-        return floor(sustainable_consumption / (len(self.getKnownAgents()) + 1))
+        self.sustainable_consumption = floor(sustainable_consumption / (len(self.getKnownAgents()) + 1))
+        return self.sustainable_consumption
 
     def act(self, view, seen_actions):
         for agent, action in seen_actions:
@@ -57,7 +59,20 @@ class CooperativeBehavior(GreedyBehavior):
         return self.moveTowardsClosestResource(view)
 
     def accuse(self):
-        return super().accuse()
+        if self.known_agents:
+            # Find agent which we saw eating the most
+            accused = None
+            accused_consumption = -1
+            for agent in self.known_agents:
+                seen_gathers = self.getAgent().getSeenGathers(agent)
+                if len(seen_gathers) > accused_consumption:
+                    accused = agent
+                    accused_consumption = len(seen_gathers)
+
+            # Accuse agent if it consumed more than the sustainable consumption and more than ourselves
+            if accused is not None and accused_consumption > self.sustainable_consumption and accused_consumption > self.getAgent().getRoundEndowment():
+                    return accused
+        return None
 
     def vote(self, accused_actions, accused):
         return super().vote(accused_actions, accused)
