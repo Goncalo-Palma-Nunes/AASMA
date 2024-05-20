@@ -64,6 +64,9 @@ class Agent:
     ###########################
     ###       Methods       ###
     ###########################
+    
+    def addSeenGather(self, accused, position):
+        self.seen_gathers.setdefault(accused, set()).add(position)
 
     def canSee(self, i, j):
         return (self.position[0] - self.sight_radius <= i <= self.position[0] + self.sight_radius and
@@ -95,8 +98,9 @@ class Agent:
         # Store any seen gathers
         for agent, action in seen_actions:
             if isinstance(action, Gather):
-                seen_gathers = self.seen_gathers.get(agent, set())
-                seen_gathers.add((agent.getPosition()[0], agent.getPosition()[1]))
+                #print("Agent ", self.getId(), " saw agent ", agent.getId(), " gather at ", agent.getPosition()) 
+                self.addSeenGather(agent, agent.getPosition())
+                #print(seen_gathers)
 
         # Update the agent's view of the board
         self.perceive(timestamp, board)
