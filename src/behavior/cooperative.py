@@ -52,7 +52,7 @@ class CooperativeBehavior(Behavior):
         boardsize = board.getSize()
         num_apples = board.getNumberOfResources()
         if num_apples == 0:
-            return 0 #idk what number to return in this case
+            return 0 
         if num_players == 0:
             return 1
         if (boardsize - num_apples) == 0:
@@ -91,9 +91,11 @@ class CooperativeBehavior(Behavior):
 
         
     def moveTowardsResource(self, view : Board):
-        if view.hasResource(self.getPosition()[0], self.getPosition()[1]) \
-            and self.getAgent().getRoundEndowment() < self.getSustainableConsumption():
-            return Gather()
+        if view.hasResource(self.getPosition()[0], self.getPosition()[1]):
+            if self.getAgent().getRoundEndowment() < self.getSustainableConsumption():
+                return Gather()
+            else:
+                return self.moveRandomly()
         
         if self.getPlan().isEmpty() or not self.targetStillValid():
             self.getPlan().definePlan(self.getAgent().pathToClosestApple())
