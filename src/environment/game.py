@@ -322,6 +322,12 @@ class Game:
             timestamp = self.getCurrentTurn() + self.getCurrentRound() * self.getNumTurns()
             self.getBoard().setTimestamp(timestamp)
 
+            # Make agents communicate
+            for ag1 in self.getAgents():
+                for ag2 in self.getAgents():
+                    if ag1 != ag2 and ag1.canSee(ag2.getPosition()[0], ag2.getPosition()[1]):
+                        ag1.receiveInformation(ag2)
+
             # Collect actions from agents
             new_actions = []
             for agent in self.getAgents():

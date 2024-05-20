@@ -97,6 +97,10 @@ class Agent:
 
         return cell
 
+    def receiveInformation(self, other):
+        if self.view is not None and other.getView() is not None:
+            self.view.merge(other.getView())
+
     def act(self, timestamp, board, seen_actions):
         # Store any seen gathers
         for agent, action in seen_actions:
