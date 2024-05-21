@@ -14,9 +14,12 @@ class GreedyBehavior(Behavior):
     def getKnownAgents(self):
         return self.known_agents
 
+    def getClosestResource(self, view):
+        return view.getClosestResource(self.getPosition(), lambda i, j: not view.hasAgent(i, j))
+
     def moveTowardsClosestResource(self, view):
         if self.target_position is None or not view.hasResource(self.target_position[0], self.target_position[1]):
-            self.target_position = view.getClosestResource(self.getPosition())
+            self.target_position = self.getClosestResource(view)
             if self.target_position is None:
                 return Move.random()
 

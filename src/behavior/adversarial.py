@@ -9,6 +9,13 @@ class AdversarialBehavior(CooperativeBehavior):
     def getColor(self):
         return "gold"
 
+    def getClosestResource(self, view):
+        if self.acceptableToEatMore(view):
+            return view.getClosestResource(self.getPosition(), lambda i, j: not view.hasAgent(i, j))
+        else:
+            # Avoid other agents
+            return view.getClosestResource(self.getPosition(), lambda i, j: not view.anyAgentsInRadius((i, j), self.getAgent().getSightRadius(), ignore=self.getPosition()))
+
     def act(self, view, seen_actions):
         for agent, action in seen_actions:
             self.known_agents.add(agent)

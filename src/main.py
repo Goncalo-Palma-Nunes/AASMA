@@ -14,17 +14,17 @@ if __name__ == "__main__":
     resource_growth_frequency = 0.2
     sight_radius = 4
     num_rounds = 100
-    num_turns = 25 # Turns per round
-    turn_time = 25 # Milliseconds per game turn
+    num_turns = 100 # Turns per round
+    turn_time = 100 # Milliseconds per game turn
     accusation_individual_time = 1000 # Milliseconds the accusation screen is shown
     accusation_ranking_time = 2000 # Milliseconds the accusation results screen is shown
     voting_individual_time = 1000 # Milliseconds the voting screen is shown
     voting_result_time = 2000 # Milliseconds the voting results screen is shown
 
     random_count = 0
-    greedy_count = 1
-    cooperative_count = 49
-    adversarial_count = 0
+    greedy_count = 0
+    cooperative_count = 10
+    adversarial_count = 5
 
     # Initialize behaviors
     behaviors = []

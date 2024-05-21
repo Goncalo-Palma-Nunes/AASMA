@@ -349,7 +349,7 @@ class Board:
         # If no path is found, return an empty list
         return []
 
-    def getClosestResource(self, position, radius=None):
+    def getClosestResource(self, position, filterFun=None, radius=None):
         """Return the closest position with a resource to the given position."""
 
         if radius is None:
@@ -361,19 +361,20 @@ class Board:
                 if self.hasResource(i, j):
                     distance = self.manhattanDistance(position[0], position[1], i, j)
                     if distance < min_distance:
-                        min_distance = distance
-                        closest_position = (i, j)
+                        if filterFun is None or filterFun(i, j):
+                            min_distance = distance
+                            closest_position = (i, j)
 
         if min_distance <= radius:
             return closest_position
         else:
             return None
 
-    def anyAgentsInRadius(self, position, radius):
+    def anyAgentsInRadius(self, position, radius, ignore=None):
         i, j = position
         for k in range(i - radius, i + radius + 1):
             for l in range(j - radius, j + radius + 1):
-                if self.withinBounds(k, l) and self.hasAgent(k, l):
+                if self.withinBounds(k, l) and self.hasAgent(k, l) and (k, l) != ignore:
                     if k != i or l != j:
                         return True
         return False
