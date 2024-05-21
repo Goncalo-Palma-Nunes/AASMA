@@ -167,6 +167,20 @@ class Board:
 
     def takeAgent(self, i, j):
         return self.getCell(i, j).takeAgent()
+    
+    def hasSurroundedResource(self, i, j):
+        if not self.hasResource(i, j):
+            return False
+        
+        if self.withinBounds(i - 1, j) and not self.hasResource(i - 1, j):
+            return False
+        if self.withinBounds(i + 1, j) and not self.hasResource(i + 1, j):
+            return False
+        if self.withinBounds(i, j - 1) and not self.hasResource(i, j - 1):
+            return False
+        if self.withinBounds(i, j + 1) and not self.hasResource(i, j + 1):
+            return False
+        return True
 
     def countNeighborResources(self, i, j):
         count = 0

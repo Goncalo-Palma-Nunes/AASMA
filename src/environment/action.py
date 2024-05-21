@@ -78,9 +78,18 @@ class Move(Action):
         return 0
 
 class Gather(Action):
+
+
+
+    def __init__(self, acceptable=False):
+        self.acceptable = acceptable
+        
     ###########################
     ###       Methods       ###
     ###########################
+
+    def isSociallyAcceptable(self):
+        return self.acceptable
 
     def execute(self, agent, board):
         if board.takeResource(agent.getPosition()[0], agent.getPosition()[1]):

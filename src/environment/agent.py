@@ -104,8 +104,9 @@ class Agent:
     def act(self, timestamp, board, seen_actions):
         # Store any seen gathers
         for agent, action in seen_actions:
-            if isinstance(action, Gather):
-                #print("Agent ", self.getId(), " saw agent ", agent.getId(), " gather at ", agent.getPosition()) 
+            if isinstance(action, Gather) and \
+                not action.isSociallyAcceptable():
+                #print("Agent ", self.getId(), " saw agent ", agent.getId(), " gather at ", agent.getPosition())
                 self.addSeenGather(agent, agent.getPosition())
                 #print(seen_gathers)
 

@@ -53,6 +53,9 @@ class CooperativeBehavior(GreedyBehavior):
             sustainable_consumption = self.computeSustainableConsumption(view)
             if self.getAgent().getRoundEndowment() < sustainable_consumption:
                 return Gather()
+            elif view.hasSurroundedResource(self.getPosition()[0], self.getPosition()[1]):
+                # Socially acceptable to eat more than sustainable consumption if the resource is surrounded
+                return Gather(acceptable=True)
             else:
                 return Move.random()
 
