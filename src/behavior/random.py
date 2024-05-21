@@ -39,4 +39,7 @@ class RandomBehavior(Behavior):
 
     def vote(self, accused, accused_actions):
         return random.choice([True, False])
+    
+    def __str__(self) -> str:
+        return "Random"
 

@@ -89,3 +89,7 @@ class CooperativeBehavior(GreedyBehavior):
 
     def vote(self, accused_actions, accused):
         return super().vote(accused_actions, accused)
+    
+
+    def __str__(self) -> str:
+        return "Cooperative"

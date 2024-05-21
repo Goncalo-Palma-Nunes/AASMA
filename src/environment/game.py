@@ -21,12 +21,12 @@ class Game:
 
         def computeRoundStats(self):
             round_stats = {}
-            round_stats["average_endowment"] = self.getAverageEndowment()
-            round_stats["median_endowment"] = self.getMedianEndowment()
-            round_stats["max_endowment"] = self.getMaxEndowment()
-            round_stats["min_endowment"] = self.getMinEndowment()
-            round_stats["variance_endowment"] = self.getVarianceEndowment()
-            round_stats["standard_deviation_endowment"] = self.getStandardDeviationEndowment()
+            round_stats["average_endowment"] = self.getAverageEndowmentByBehavior()
+            round_stats["median_endowment"] = self.getMedianEndowmentByBehavior()
+            round_stats["max_endowment"] = self.getMaxEndowmentByBehavior()
+            round_stats["min_endowment"] = self.getMinEndowmentByBehavior()
+            round_stats["variance_endowment"] = self.getVarianceEndowmentByBehavior()
+            round_stats["standard_deviation_endowment"] = self.getStandardDeviationEndowmentByBehavior()
             return round_stats
         
         def append(self, round_stats):
@@ -37,27 +37,74 @@ class Game:
             self.min_endowment.append(round_stats["min_endowment"])
             self.variance_endowment.append(round_stats["variance_endowment"])
             self.standard_deviation_endowment.append(round_stats["standard_deviation_endowment"])
-        
-        def getAverageEndowment(self):
-            return sum([agent.roundEndowment for agent in self.game.agents]) / len(self.game.agents)
-        
-        def getMedianEndowment(self):
-            endowments = [agent.roundEndowment for agent in self.game.agents]
-            endowments.sort()
-            return endowments[len(endowments) // 2]
 
-        def getMaxEndowment(self):
-            return max([agent.roundEndowment for agent in self.game.agents])
 
-        def getMinEndowment(self):
-            return min([agent.roundEndowment for agent in self.game.agents])
+        def getEndowmentsByBehavior(self):
+            endowments = {}
+            for agent in self.game.agents: # for each agent
+                behavior = agent.getBehavior() # get the behavior
+                if behavior not in endowments: # if the behavior is not in the endowments
+                    endowments[behavior.__str__()] = [] # create a list for the behavior
+                endowments[behavior.__str__()].append(agent.roundEndowment) # append the agent's endowment to the behavior's list
+            
+            return endowments
+
+        def getAverageEndowmentByBehavior(self):
+            endowments = self.getEndowmentsByBehavior()
+
+            # average it by number of players
+            num_players = len(self.game.agents) # get the number of players
+            for behavior, endowment in endowments.items(): # for each behavior and its endowment list
+                endowments[behavior] = sum(endowment) / num_players # average the endowment list by the number of players
+
+            return endowments # return the endowments
         
-        def getVarianceEndowment(self):
-            mean = self.getAverageEndowment()
-            return sum([(agent.roundEndowment - mean) ** 2 for agent in self.game.agents]) / len(self.game.agents)
+        def getMedianEndowmentByBehavior(self):
+            endowments = self.getEndowmentsByBehavior()
+            
+            for behavior, endowment in endowments.items(): # for each behavior and its endowment list
+                endowments[behavior] = median(endowment) # get the median of the endowment list
+
+            return endowments # return the endowments
+
+        def getMaxEndowmentByBehavior(self):
+            endowments = self.getEndowmentsByBehavior()
+
+            for behavior, endowment in endowments.items():
+                endowments[behavior] = max(endowment)
+            
+            return endowments # return the endowments
+
+        def getMinEndowmentByBehavior(self):
+            endowments = self.getEndowmentsByBehavior()
+
+            for behavior, endowment in endowments.items(): # for each behavior and its endowment list
+                endowments[behavior] = min(endowment) # get the minimum of the endowment list
+            
+            return endowments # return the endowments
         
-        def getStandardDeviationEndowment(self):
-            return self.getVarianceEndowment() ** 0.5
+        def getVarianceEndowmentByBehavior(self):
+            endowments = self.getEndowmentsByBehavior()
+
+            num_players = len(self.game.agents)
+            for behavior, endowment in endowments.items():
+
+                mean = sum(endowment) / num_players
+                endowments[behavior] = sum((x - mean) ** 2 for x in endowment) / num_players
+
+            return endowments
+        
+        def getStandardDeviationEndowmentByBehavior(self):
+            endowments = self.getEndowmentsByBehavior()
+
+            num_players = len(self.game.agents)
+            for behavior, endowment in endowments.items():
+                    
+                mean = sum(endowment) / num_players
+                endowments[behavior] = (sum((x - mean) ** 2 for x in endowment) / num_players) ** 0.5
+
+            return endowments
+
 
         def getStats(self):
             return self.round_stats

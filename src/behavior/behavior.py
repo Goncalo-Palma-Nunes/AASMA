@@ -51,6 +51,8 @@ class Behavior:
     def vote(self, accused, accused_actions):
         pass
 
+    def __str__(self) -> str:
+        return "Behavior"
 class Plan:
     ###########################
     ###     Constructor     ###

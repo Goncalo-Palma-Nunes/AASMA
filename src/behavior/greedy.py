@@ -55,3 +55,6 @@ class GreedyBehavior(Behavior):
         if accused == self.getAgent():
             return False
         return len(consumption) > self.getAgent().getRoundEndowment()
+    
+    def __str__(self) -> str:
+        return "Greedy"
