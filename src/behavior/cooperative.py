@@ -49,6 +49,12 @@ class CooperativeBehavior(GreedyBehavior):
         sustainable_consumption = self.computeSustainableConsumption(view)
         return self.getAgent().getRoundEndowment() < sustainable_consumption
 
+    def getClosestResource(self, view):
+        if self.acceptableToEatMore(view):
+            return super().getClosestResource(view)
+        else:
+            return view.getClosestResource(self.getPosition(), lambda i, j: view.hasSurroundedResource(i, j))
+
     def act(self, view, seen_actions):
         for agent, action in seen_actions:
             self.known_agents.add(agent)

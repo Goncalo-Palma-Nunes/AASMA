@@ -11,7 +11,7 @@ class AdversarialBehavior(CooperativeBehavior):
 
     def getClosestResource(self, view):
         if self.acceptableToEatMore(view):
-            return view.getClosestResource(self.getPosition(), lambda i, j: not view.hasAgent(i, j))
+            return super().getClosestResource(view)
         else:
             # Avoid other agents
             return view.getClosestResource(self.getPosition(), lambda i, j: not view.anyAgentsInRadius((i, j), self.getAgent().getSightRadius(), ignore=self.getPosition()))
