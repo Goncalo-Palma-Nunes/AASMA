@@ -411,4 +411,15 @@ class UI:
         result_text_y = votes_text_y + result_text.get_height() / self.getCellSize()
         self.getScreen().blit(result_text, (result_text_x * self.getCellSize(), result_text_y * self.getCellSize()))
         
+    def drawGameOver(self):
+        pop_up = self.getPopUp()
+        
+        new_font = pygame.font.SysFont("arialblack", self.getCellSize() * 2)
+        
+        position = (pop_up.getCenter()[0] / self.getCellSize(), pop_up.getCenter()[1] / self.getCellSize())
+        text = new_font.render("GAME OVER", True, (0,0,0))
+        text_x = position[0]  - (text.get_width() / (self.getCellSize() * 2))
+        text_y = position[1] - (text.get_height() / (self.getCellSize() * 2))
+        self.getScreen().blit(text, (text_x * self.getCellSize(), text_y * self.getCellSize()))
+        
         
