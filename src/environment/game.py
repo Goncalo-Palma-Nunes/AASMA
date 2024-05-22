@@ -30,7 +30,7 @@ class Game:
             round_stats["standard_deviation_endowment"] = self.getStandardDeviationEndowmentByBehavior()
             self.stats_round = self.game.getCurrentRound()
             return round_stats
-        
+
         def append(self, round_stats):
             self.round_stats.append(round_stats)
             self.average_endowment.append(round_stats["average_endowment"])
@@ -213,6 +213,15 @@ class Game:
 
     def getTotalReward(self):
         return sum(agent.getEndowment() for agent in self.getAgents())
+    
+    def getTotalRewardByBehavior(self):
+        rewards = {}
+        for agent in self.getAgents():
+            behavior = agent.getBehavior()
+            if behavior not in rewards:
+                rewards[behavior] = 0
+            rewards[behavior] += agent.getEndowment()
+        return rewards
     
     def getOrderedAccusedList(self):
         accusation_count = {}
