@@ -106,9 +106,7 @@ class Agent:
         for agent, action in seen_actions:
             if isinstance(action, Gather) and \
                 not action.isSociallyAcceptable():
-                #print("Agent ", self.getId(), " saw agent ", agent.getId(), " gather at ", agent.getPosition())
                 self.addSeenGather(agent, agent.getPosition())
-                #print(seen_gathers)
 
         # Update the agent's view of the board
         self.perceive(timestamp, board)

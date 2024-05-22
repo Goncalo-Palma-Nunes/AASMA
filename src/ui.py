@@ -272,7 +272,10 @@ class UI:
                 if cell.hasAgent():
                     self.getAgentSprites()[cell.getAgent().getId()].drawTo(self.getScreen(), i, j)
                     if cell.getAgent() == self.getGame().getImprisoned():
-                        self.getJailSprite().drawTo(self.getScreen(), i, j)           
+                        self.getJailSprite().drawTo(self.getScreen(), i, j)
+                        
+        text = self.getFont().render(f"Round {self.getGame().getCurrentRound()}", True, (0,0,0))
+        self.getScreen().blit(text, (0, 0))           
                                
     def drawPopUpAccusationList(self):
         board_size = self.getBoard().getSize()
@@ -413,7 +416,6 @@ class UI:
         
     def drawGameOver(self):
         pop_up = self.getPopUp()
-        
         new_font = pygame.font.SysFont("arialblack", self.getCellSize() * 2)
         
         position = (pop_up.getCenter()[0] / self.getCellSize(), pop_up.getCenter()[1] / self.getCellSize())
