@@ -65,7 +65,7 @@ if __name__ == "__main__":
         current_time = pygame.time.get_ticks()
         if game.getDone():
             ui.drawBoard()
-            ui.drawGameOver()  
+            ui.drawGameOver()
         elif game.isRound():
             if game.getCurrentRound() > 0 and game.getCurrentTurn() == 0 and current_time < last_step_time + voting_individual_time:
                 ui.drawPopUpVotingList()
@@ -76,23 +76,8 @@ if __name__ == "__main__":
                 if current_time >= last_step_time + turn_time:
                     last_step_time = current_time
                     round_stats = game.step()
-
-                    # Store statistics
-                    stats["average_endowment"].append(round_stats.average_endowment)
-                    stats["median_endowment"].append(round_stats.median_endowment)
-                    stats["max_endowment"].append(round_stats.max_endowment)
-                    stats["min_endowment"].append(round_stats.min_endowment)
-                    stats["variance_endowment"].append(round_stats.variance_endowment)
-                    stats["standard_deviation_endowment"].append(round_stats.standard_deviation_endowment)
-
-                    print("Round: ", game.getCurrentRound(), " Turn: ", game.getCurrentTurn())
-                    print("Average endowment: ", round_stats.average_endowment)
-                    print("Median endowment: ", round_stats.median_endowment)
-                    print("Max endowment: ", round_stats.max_endowment)
-                    print("Min endowment: ", round_stats.min_endowment)
-                    print("Variance endowment: ", round_stats.variance_endowment)
-                    print("Standard deviation endowment: ", round_stats.standard_deviation_endowment)
-                    print("")
+                    if (game.getDone()):
+                        round_stats.printStats()
 
                 # Draw the board
                 ui.drawBoard()
@@ -106,7 +91,8 @@ if __name__ == "__main__":
                 ui.drawPopUpAccusationRanking()
             else:
                 last_step_time = current_time
-                game.step()
+                round_stats = game.step()
+                round_stats.printStats()
 
         pygame.display.flip()
 

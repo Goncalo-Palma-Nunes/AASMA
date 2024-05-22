@@ -274,7 +274,7 @@ class UI:
                     if cell.getAgent() == self.getGame().getImprisoned():
                         self.getJailSprite().drawTo(self.getScreen(), i, j)
                         
-        text = self.getFont().render(f"Round {self.getGame().getCurrentRound()}", True, (0,0,0))
+        text = self.getFont().render(f"Round {self.getGame().getCurrentRound() + 1}", True, (0,0,0))
         self.getScreen().blit(text, (0, 0))           
                                
     def drawPopUpAccusationList(self):

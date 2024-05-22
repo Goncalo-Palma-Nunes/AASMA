@@ -18,6 +18,7 @@ class Game:
             self.min_endowment = []
             self.variance_endowment = []
             self.standard_deviation_endowment = []
+            self.stats_round = 0
 
         def computeRoundStats(self):
             round_stats = {}
@@ -27,6 +28,7 @@ class Game:
             round_stats["min_endowment"] = self.getMinEndowmentByBehavior()
             round_stats["variance_endowment"] = self.getVarianceEndowmentByBehavior()
             round_stats["standard_deviation_endowment"] = self.getStandardDeviationEndowmentByBehavior()
+            self.stats_round = self.game.getCurrentRound()
             return round_stats
         
         def append(self, round_stats):
@@ -108,6 +110,17 @@ class Game:
 
         def getStats(self):
             return self.round_stats
+        
+        def printStats(self):
+            print("Round: ", self.stats_round + 1)
+            print("Average endowment: ", self.average_endowment)
+            print("Median endowment: ", self.median_endowment)
+            print("Max endowment: ", self.max_endowment)
+            print("Min endowment: ", self.min_endowment)
+            print("Variance endowment: ", self.variance_endowment)
+            print("Standard deviation endowment: ", self.standard_deviation_endowment)
+            print("")
+
 
     ###########################
     ###     Constructor     ###
@@ -313,8 +326,6 @@ class Game:
 
     def step(self):
         if self.getDone():
-            stats = self.stats.computeRoundStats()
-            self.stats.append(stats)
             return self.stats
         
         if self.isAccusing():
@@ -323,6 +334,7 @@ class Game:
             for agent in self.getAgents():
                 accusations[agent] = agent.accuse()
             self.setAccusations(accusations)
+            
         elif self.isVoting():
             self.accused = list(self.getOrderedAccusedList().keys())[0]
             self.setAccusations({})
@@ -354,15 +366,22 @@ class Game:
                     # Imprison the accused agent
                     print(f"{self.accused.getId()} was imprisoned.")
                     self.setImprisoned(self.accused)
-                           
+             
+            # Compute statistics
+            stats = self.stats.computeRoundStats()
+            self.stats.append(stats)               
             if self.remainingRounds() == 1 or self.getBoard().getNumberOfResources() == 0:
                 self.setDone(True)
             else:
-                # Compute statistics
-                stats = self.stats.computeRoundStats()
-                self.stats.append(stats)
                 self.nextRound()
         else: # Normal turn
+            #Verify if the game is over
+            if self.getBoard().getNumberOfResources() == 0:
+                stats = self.stats.computeRoundStats()
+                self.stats.append(stats)
+                self.setDone(True)
+                return self.stats
+                    
             # Advance the timestamp of the board cells
             timestamp = self.getCurrentTurn() + self.getCurrentRound() * self.getNumTurns()
             self.getBoard().setTimestamp(timestamp)
@@ -385,14 +404,8 @@ class Game:
             self.actions.sort(key=lambda x: random())
             for agent, action in self.actions:
                 action.execute(agent, self.getBoard())
-
-            if self.getBoard().getNumberOfResources() == 0:
-                self.setDone(True)
-            elif self.remainingTurns() == 1:
-                if self.remainingRounds() == 1:
-                    self.setDone(True)
-            else:
-                self.nextTurn()
+            
+            self.nextTurn()
         
         return self.stats
 
