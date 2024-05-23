@@ -161,6 +161,9 @@ class Board:
 
     def hasAgent(self, i, j):
         return self.getCell(i, j).hasAgent()
+
+    def isFreeToMove(self, i, j):
+        return self.withinBounds(i, j) and not self.hasAgent(i, j)
     
     def putAgent(self, i, j, agent):
         self.getCell(i, j).putAgent(agent)
@@ -168,10 +171,7 @@ class Board:
     def takeAgent(self, i, j):
         return self.getCell(i, j).takeAgent()
     
-    def hasSurroundedResource(self, i, j):
-        if not self.hasResource(i, j):
-            return False
-        
+    def isSurroundedByResources(self, i, j):
         if self.withinBounds(i - 1, j) and not self.hasResource(i - 1, j):
             return False
         if self.withinBounds(i + 1, j) and not self.hasResource(i + 1, j):
@@ -181,6 +181,9 @@ class Board:
         if self.withinBounds(i, j + 1) and not self.hasResource(i, j + 1):
             return False
         return True
+
+    def hasSurroundedResource(self, i, j):
+        return self.hasResource(i, j) and self.isSurroundedByResources(i, j)
 
     def countNeighborResources(self, i, j):
         count = 0
@@ -378,6 +381,16 @@ class Board:
                     if k != i or l != j:
                         return True
         return False
+
+    def getOldestPosition(self):
+        oldest = None
+        min_timestamp = float('inf')
+        for i in range(self.getSize()):
+            for j in range(self.getSize()):
+                if self.getCell(i, j).getTimestamp() < min_timestamp:
+                    oldest = (i, j)
+                    min_timestamp = self.getCell(i, j).getTimestamp()
+        return oldest
 
     def __str__(self):
         output = "Size: " + str(self.getSize()) + "\n" + \

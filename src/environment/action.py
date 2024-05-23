@@ -56,41 +56,37 @@ class Move(Action):
             return Move.random()
 
     ###########################
+    ### Getters and Setters ###
+    ###########################
+
+    def getNextPosition(self, old_i, old_j):
+        if self.direction == UP:
+            return old_i, old_j - 1
+        elif self.direction == DOWN:
+            return old_i, old_j + 1
+        elif self.direction == LEFT:
+            return old_i - 1, old_j
+        elif self.direction == RIGHT:
+            return old_i + 1, old_j
+        else:
+            return old_i, old_j
+
+    ###########################
     ###       Methods       ###
     ###########################
 
     def execute(self, agent, board):
         old_i, old_j = agent.getPosition()
-        if self.direction == UP:
-            new_i, new_j = old_i, old_j - 1
-        elif self.direction == DOWN:
-            new_i, new_j = old_i, old_j + 1
-        elif self.direction == LEFT:
-            new_i, new_j = old_i - 1, old_j
-        elif self.direction == RIGHT:
-            new_i, new_j = old_i + 1, old_j
-        else:
-            return 0
-
-        if board.withinBounds(new_i, new_j) and not board.hasAgent(new_i, new_j):
+        new_i, new_j = self.getNextPosition(old_i, old_j)
+        if board.isFreeToMove(new_i, new_j):
             agent.setPosition((new_i, new_j))
             board.moveAgent(old_i, old_j, new_i, new_j)
-        return 0
 
 class Gather(Action):
-
-
-
-    def __init__(self, acceptable=False):
-        self.acceptable = acceptable
-        
     ###########################
     ###       Methods       ###
     ###########################
 
-    def isSociallyAcceptable(self):
-        return self.acceptable
-
     def execute(self, agent, board):
-        if board.takeResource(agent.getPosition()[0], agent.getPosition()[1]):
+        if board.takeResource(*agent.getPosition()):
             agent.incrementEndowment()

@@ -102,10 +102,10 @@ class Agent:
             self.view.merge(other.getView())
 
     def act(self, timestamp, board, seen_actions):
-        # Store any seen gathers
+        # Store any seen gathers of non-surrounded resources
         for agent, action in seen_actions:
             if isinstance(action, Gather) and \
-                not action.isSociallyAcceptable():
+                not board.isSurroundedByResources(agent.getPosition()[0], agent.getPosition()[1]):
                 self.addSeenGather(agent, agent.getPosition())
 
         # Update the agent's view of the board

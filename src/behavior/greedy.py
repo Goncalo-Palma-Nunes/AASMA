@@ -14,25 +14,34 @@ class GreedyBehavior(Behavior):
     def getKnownAgents(self):
         return self.known_agents
 
-    def getClosestResource(self, view):
-        return view.getClosestResource(self.getPosition(), lambda i, j: not view.hasAgent(i, j))
+    def canEatResource(self, view, position):
+        return not view.hasAgent(*position) or position == self.getPosition()
 
     def moveTowardsClosestResource(self, view):
-        if self.target_position is None or not view.hasResource(self.target_position[0], self.target_position[1]):
-            self.target_position = self.getClosestResource(view)
+        if self.target_position is None or not view.hasResource(*self.target_position) or not self.canEatResource(view, self.target_position):
+            self.target_position = view.getClosestResource(self.getPosition(), lambda i, j: self.canEatResource(view, (i, j)))
             if self.target_position is None:
-                return Move.random()
+                return None
 
         return Move.fromTo(self.getPosition(), self.target_position)
+
+    def moveTowardsUnseenPosition(self, view):
+        return Move.fromTo(self.getPosition(), view.getOldestPosition())
+
+    def checkMove(self, view, move):
+        if move is not None:
+            if view.isFreeToMove(*move.getNextPosition(*self.getPosition())):
+                return move
+        return Move.random()
 
     def act(self, view, seen_actions):
         for agent, action in seen_actions:
             self.known_agents.add(agent)
 
-        if view.hasResource(self.getPosition()[0], self.getPosition()[1]):
+        if view.hasResource(*self.getPosition()) and self.canEatResource(view, self.getPosition()):
             return Gather()
 
-        return self.moveTowardsClosestResource(view)
+        return self.checkMove(view, self.moveTowardsClosestResource(view) or self.moveTowardsUnseenPosition(view))
 
     def accuse(self):
         if self.known_agents:
