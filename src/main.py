@@ -8,24 +8,25 @@ import pygame
 
 if __name__ == "__main__":
     # Set some parameters
+    speed_multiplier = 10
     cell_size = 32
     sprite_scale = cell_size / 16
     board_size = 32
     resource_frequency = 0.1
     resource_growth_frequency = 0.2
     sight_radius = 4
-    num_rounds = 100
+    num_rounds = 10
     num_turns = 100 # Turns per round
-    turn_time = 100 # Milliseconds per game turn
-    accusation_individual_time = 1000 # Milliseconds the accusation screen is shown
-    accusation_ranking_time = 2000 # Milliseconds the accusation results screen is shown
-    voting_individual_time = 1000 # Milliseconds the voting screen is shown
-    voting_result_time = 2000 # Milliseconds the voting results screen is shown
+    turn_time = 200 / speed_multiplier # Milliseconds per game turn
+    accusation_individual_time = 1000 / speed_multiplier # Milliseconds the accusation screen is shown
+    accusation_ranking_time = 2000 / speed_multiplier # Milliseconds the accusation results screen is shown
+    voting_individual_time = 1000 / speed_multiplier # Milliseconds the voting screen is shown
+    voting_result_time = 2000 / speed_multiplier # Milliseconds the voting results screen is shown
 
     random_count = 0
     greedy_count = 0
-    cooperative_count = 10
-    adversarial_count = 5
+    cooperative_count = 15
+    adversarial_count = 0
 
     # Initialize behaviors
     behaviors = []
