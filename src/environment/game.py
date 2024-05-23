@@ -60,9 +60,9 @@ class Game:
             endowments = self.getEndowmentsByBehavior()
 
             # average it by number of players
-            num_players = len(self.game.agents) # get the number of players
+            num_players = self.game.getNumOfAgentTypes()
             for behavior, endowment in endowments.items(): # for each behavior and its endowment list
-                endowments[behavior] = sum(endowment) / num_players # average the endowment list by the number of players
+                endowments[behavior] = sum(endowment) / num_players[behavior] # average the endowment list by the number of players
 
             return endowments # return the endowments
         
@@ -93,22 +93,22 @@ class Game:
         def getVarianceEndowmentByBehavior(self):
             endowments = self.getEndowmentsByBehavior()
 
-            num_players = len(self.game.agents)
+            num_players = self.game.getNumOfAgentTypes()
             for behavior, endowment in endowments.items():
 
-                mean = sum(endowment) / num_players
-                endowments[behavior] = sum((x - mean) ** 2 for x in endowment) / num_players
+                mean = sum(endowment) / num_players[behavior]
+                endowments[behavior] = sum((x - mean) ** 2 for x in endowment) / num_players[behavior]
 
             return endowments
         
         def getStandardDeviationEndowmentByBehavior(self):
             endowments = self.getEndowmentsByBehavior()
 
-            num_players = len(self.game.agents)
+            num_players = self.game.getNumOfAgentTypes()   
             for behavior, endowment in endowments.items():
                     
-                mean = sum(endowment) / num_players
-                endowments[behavior] = (sum((x - mean) ** 2 for x in endowment) / num_players) ** 0.5
+                mean = sum(endowment) / num_players[behavior]
+                endowments[behavior] = (sum((x - mean) ** 2 for x in endowment) / num_players[behavior]) ** 0.5
 
             return endowments
 
@@ -230,6 +230,15 @@ class Game:
     ###########################
     ###       Methods       ###
     ###########################
+    
+    def getNumOfAgentTypes(self):
+        agent_types = {}
+        for agent in self.getAgents():
+            behavior_str = agent.getBehavior().__str__() 
+            if behavior_str not in agent_types:
+                agent_types[behavior_str] = 0
+            agent_types[behavior_str] += 1
+        return agent_types
 
     def getTotalReward(self):
         return sum(agent.getEndowment() for agent in self.getAgents())
