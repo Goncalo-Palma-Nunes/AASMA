@@ -16,6 +16,7 @@
           packages = with pkgs; [
             (python39.withPackages (ps: [
               ps.pygame
+              ps.matplotlib
             ]))
           ];
         };
