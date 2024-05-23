@@ -25,6 +25,9 @@ class CooperativeBehavior(GreedyBehavior):
             self.known_agents.add(agent)
 
         if view.hasResource(*self.getPosition()) and self.canEatResource(view, self.getPosition()):
+            neighbors = view.getNeighbors(*self.getPosition())
+            if any(view.hasAgent(*position) for position in neighbors):
+                return Move.random() # Avoid conflict with other agents
             return Gather()
 
         move = self.moveTowardsClosestResource(view)

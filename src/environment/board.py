@@ -376,6 +376,10 @@ class Board:
         else:
             return None
 
+    def getNeighbors(self, i, j):
+        neighbors = [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)]
+        return [(i, j) for i, j in neighbors if self.withinBounds(i, j)]
+
     def anyAgentsInRadius(self, position, radius, ignore=None):
         i, j = position
         for k in range(i - radius, i + radius + 1):
