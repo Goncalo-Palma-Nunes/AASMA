@@ -65,7 +65,8 @@ if __name__ == "__main__":
                 round_stats.printStats()
                 graph = Graph_Stats(round_stats)
                 for key in round_stats.getStats()[0].keys():
-                    graph.draw_lines_graph(key)
+                    graph.draw_line_plot(key)
+                    graph.draw_bar_plot(key)
                 done = True
                 
             ui.drawBoard()
