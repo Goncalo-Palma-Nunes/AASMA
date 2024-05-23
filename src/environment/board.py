@@ -170,6 +170,9 @@ class Board:
 
     def takeAgent(self, i, j):
         return self.getCell(i, j).takeAgent()
+
+    def getTimestamp(self, i, j):
+        return self.getCell(i, j).getTimestamp()
     
     def isSurroundedByResources(self, i, j):
         if self.withinBounds(i - 1, j) and not self.hasResource(i - 1, j):
@@ -352,7 +355,7 @@ class Board:
         # If no path is found, return an empty list
         return []
 
-    def getClosestResource(self, position, filterFun=None, radius=None):
+    def getClosestResource(self, position, filter_fun=None, radius=None):
         """Return the closest position with a resource to the given position."""
 
         if radius is None:
@@ -364,7 +367,7 @@ class Board:
                 if self.hasResource(i, j):
                     distance = self.manhattanDistance(position[0], position[1], i, j)
                     if distance < min_distance:
-                        if filterFun is None or filterFun(i, j):
+                        if filter_fun is None or filter_fun(i, j):
                             min_distance = distance
                             closest_position = (i, j)
 
@@ -382,14 +385,15 @@ class Board:
                         return True
         return False
 
-    def getOldestPosition(self):
+    def getOldestPosition(self, filter_fun=None):
         oldest = None
         min_timestamp = float('inf')
         for i in range(self.getSize()):
             for j in range(self.getSize()):
-                if self.getCell(i, j).getTimestamp() < min_timestamp:
-                    oldest = (i, j)
-                    min_timestamp = self.getCell(i, j).getTimestamp()
+                if self.getTimestamp(i, j) < min_timestamp:
+                    if filter_fun is None or filter_fun(i, j):
+                        oldest = (i, j)
+                        min_timestamp = self.getTimestamp(i, j)
         return oldest
 
     def __str__(self):

@@ -26,7 +26,10 @@ class GreedyBehavior(Behavior):
         return Move.fromTo(self.getPosition(), self.target_position)
 
     def moveTowardsUnseenPosition(self, view):
-        return Move.fromTo(self.getPosition(), view.getOldestPosition())
+        position = view.getOldestPosition(lambda i, j: view.hasResource(i, j) or view.getTimestamp(i, j) == 0)
+        if position is None:
+            position = view.getOldestPosition()
+        return Move.fromTo(self.getPosition(), position)
 
     def checkMove(self, view, move):
         if move is not None:
