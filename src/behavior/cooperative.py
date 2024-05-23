@@ -18,16 +18,14 @@ class CooperativeBehavior(GreedyBehavior):
         return "pink"
 
     def canEatResource(self, view, position):
-        return super().canEatResource(view, position) and view.isSurroundedByResources(*position)
+        return super().canEatResource(view, position) and view.isSurroundedByResources(*position) and \
+               not any(view.hasAgent(*position) and position != self.getPosition() for position in view.getNeighbors(*position))
 
     def act(self, view, seen_actions):
         for agent, action in seen_actions:
             self.known_agents.add(agent)
 
         if view.hasResource(*self.getPosition()) and self.canEatResource(view, self.getPosition()):
-            neighbors = view.getNeighbors(*self.getPosition())
-            if any(view.hasAgent(*position) for position in neighbors):
-                return Move.random() # Avoid conflict with other agents
             return Gather()
 
         move = self.moveTowardsClosestResource(view)
