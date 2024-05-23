@@ -89,24 +89,6 @@ class Agent:
         self.endowment += 1
         self.roundEndowment += 1
 
-    def pathToClosestApple(self):
-        """Considers the entire view """
-        return self.getView().shortestPath(self.getPosition()[0], self.getPosition()[1])
-
-    def closestAppleInRadius(self):
-        """Considers only the agent's sight radius"""
-        i, j = self.getPosition()
-        cell = None
-        cell_distance = float('inf')
-        for k in range(i - self.sight_radius, i + self.sight_radius + 1):
-            for l in range(j - self.sight_radius, j + self.sight_radius + 1):
-                if self.getView().hasResource(k, l) and \
-                    self.getView().manhattanDistance((i, j), (k, l)) < cell_distance:
-                    cell = (k, l)
-                    cell_distance = self.getView().manhattanDistance((i, j), (k, l))
-
-        return cell
-
     def receiveInformation(self, other):
         if self.view is not None and other.getView() is not None:
             self.view.merge(other.getView())
