@@ -34,7 +34,7 @@ class RandomBehavior(Behavior):
 
     def accuse(self):
         if self.known_agents:
-            return random.choice(list(self.known_agents))
+            return random.choice([ag for ag in self.known_agents if not ag.isImprisoned()])
         return None
 
     def vote(self, accused, accused_actions):

@@ -46,17 +46,7 @@ class CooperativeBehavior(GreedyBehavior):
         return self.checkMove(view, move)
 
     def accuse(self):
-        if self.known_agents:
-            # Find agent which we saw eating the most resources which are not sustainable
-            accused = None
-            accused_consumption = 0
-            for agent in self.known_agents:
-                seen_gathers = self.getAgent().getSeenGathers(agent)
-                if len(seen_gathers) > accused_consumption:
-                    accused = agent
-                    accused_consumption = len(seen_gathers)
-            return accused
-        return None
+        return super().accuse()
 
     def vote(self, accused_actions, accused):
         return len(accused_actions) > 0

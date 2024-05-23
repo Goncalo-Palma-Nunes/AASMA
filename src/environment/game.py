@@ -175,7 +175,6 @@ class Game:
         self.accusations = {}
         self.votes = {}
         self.number_of_votes = (0, 0)
-        self.imprisoned = None
         self.accused = None
 
     ###########################
@@ -215,9 +214,6 @@ class Game:
     def getDone(self):
         return self.done
 
-    def getImprisoned(self):
-        return self.imprisoned
-    
     def getMostAccused(self):
         return self.accused
 
@@ -271,30 +267,6 @@ class Game:
     def isVoting(self):
         return self.remainingTurns() == 1 and len(self.getAccusations()) > 0
 
-    def setPlayers(self, agents):
-        if not isinstance(agents, (list, tuple)):
-            raise TypeError("Players must be a list or tuple")
-
-        if len(agents) > self.getBoardSize() ** 2:
-            raise ValueError("Number of agents must be less than or equal to the board size squared.")
-
-        self.agents = agents
-
-        if not all(isinstance(agent, Agent) for agent in agents):
-            raise ValueError("Players must be a list or tuple of agents.")
-        
-        if len(agents) < 2:
-            raise ValueError("There must be at least two agents.")
-        
-        if len(agents) == 0:
-            for i in range(agents):
-                self.agents.append(RandomWalker(self, 0, lambda x: 0))
-
-        for agent in self.agents:
-            position = tuple(floor(random() * self.getBoardSize()) for i in range(2))
-            agent.setPosition(position)
-            self.getBoard().addAgent(position[0], position[1], agent)
-
     def setNumRounds(self, num_rounds):
         if not isinstance(num_rounds, int) or num_rounds < 0:
             raise ValueError("Number of rounds must be a positive integer.")
@@ -330,8 +302,9 @@ class Game:
     def setVotes(self, votes):
         self.votes = votes
 
-    def setImprisoned(self, imprisoned):
-        self.imprisoned = imprisoned
+    def imprison(self, agent):
+        agent.imprison()
+        self.getBoard().takeAgent(*agent.getPosition())
 
     def remainingTurns(self):
         return self.getNumTurns() - self.getCurrentTurn()
@@ -364,16 +337,14 @@ class Game:
             # Collect accusations from agents
             accusations = {}
             for agent in self.getAgents():
-                accusations[agent] = agent.accuse()
+                if not agent.isImprisoned():
+                    accusations[agent] = agent.accuse()
             self.setAccusations(accusations)
             
         elif self.isVoting():
             self.accused = list(self.getOrderedAccusedList().keys())[0]
             self.setAccusations({})
             
-            # Release the last accused agent
-            self.setImprisoned(None)
-
             if self.accused is not None:
                 # Share information about the accused agent's consumption
                 consumption = set()
@@ -385,11 +356,12 @@ class Game:
                 no_votes = 0
                 yes_votes = 0
                 for agent in self.getAgents():
-                    votes[agent] = agent.vote(consumption, self.accused)
-                    if votes[agent]:
-                        yes_votes += 1
-                    else:
-                        no_votes += 1
+                    if not agent.isImprisoned():
+                        votes[agent] = agent.vote(consumption, self.accused)
+                        if votes[agent]:
+                            yes_votes += 1
+                        else:
+                            no_votes += 1
                 self.setVotes(votes)
 
                 print(f"YES: {yes_votes}, NO: {no_votes} (accused: {self.accused.getId()})")
@@ -397,7 +369,7 @@ class Game:
                 if yes_votes > no_votes:
                     # Imprison the accused agent
                     print(f"{self.accused.getId()} was imprisoned.")
-                    self.setImprisoned(self.accused)
+                    self.imprison(self.accused)
              
             # Compute statistics
             stats = self.stats.computeRoundStats()
@@ -427,7 +399,7 @@ class Game:
             # Collect actions from agents
             new_actions = []
             for agent in self.getAgents():
-                if self.getImprisoned() != agent: # Skip imprisoned agent
+                if not agent.isImprisoned(): # Skip imprisoned agents
                     seen_actions = [(ag, ac) for ag, ac in self.actions if ag != agent and agent.canSee(ag.getPosition()[0], ag.getPosition()[1])]
                     new_actions.append((agent, agent.act(timestamp, self.getBoard(), seen_actions)))
             self.actions = new_actions

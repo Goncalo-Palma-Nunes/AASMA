@@ -45,17 +45,15 @@ class GreedyBehavior(Behavior):
 
     def accuse(self):
         if self.known_agents:
-            # Accuse the one agent seen to have eaten more by iterating
-            # through the agent's seen_gathers dictionary and comparing the
-            # number of seen gathers
+            # Find agent which we saw eating the most resources which are not sustainable
             accused = None
-            accused_actions = -1
+            accused_consumption = 0
             for agent in self.known_agents:
-                seen_gathers = self.getAgent().getSeenGathers(agent)
-                if len(seen_gathers) > accused_actions:
-                    accused = agent
-                    accused_actions = len(seen_gathers)
-
+                if not agent.isImprisoned():
+                    seen_gathers = self.getAgent().getSeenGathers(agent)
+                    if len(seen_gathers) > accused_consumption:
+                        accused = agent
+                        accused_consumption = len(seen_gathers)
             return accused
         return None
 

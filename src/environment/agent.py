@@ -26,10 +26,17 @@ class Agent:
         self.roundEndowment = 0
         self.view = None
         self.seen_gathers = {}
+        self.imprisoned = False
 
     ###########################
     ### Getters and setters ###
     ###########################
+
+    def imprison(self):
+        self.imprisoned = True
+
+    def isImprisoned(self):
+        return self.imprisoned
 
     def getId(self):
         return self.id

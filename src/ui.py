@@ -271,7 +271,7 @@ class UI:
                     self.getAppleSprite().drawTo(self.getScreen(), i, j)
                 if cell.hasAgent():
                     self.getAgentSprites()[cell.getAgent().getId()].drawTo(self.getScreen(), i, j)
-                    if cell.getAgent() == self.getGame().getImprisoned():
+                    if cell.getAgent().isImprisoned():
                         self.getJailSprite().drawTo(self.getScreen(), i, j)
                         
         text = self.getFont().render(f"Round {self.getGame().getCurrentRound() + 1}", True, (0,0,0))

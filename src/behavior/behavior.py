@@ -53,6 +53,7 @@ class Behavior:
 
     def __str__(self) -> str:
         return "Behavior"
+
 class Plan:
     ###########################
     ###     Constructor     ###
