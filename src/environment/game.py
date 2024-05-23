@@ -341,8 +341,13 @@ class Game:
     def nextRound(self):
         self.setCurrentRound(self.getCurrentRound() + 1)
         self.setCurrentTurn(0)
+
+        # Grow resources on both the board and the agents' views
         self.board.growResources(self.getResourceGrowthFrequency())
-        
+        for agent in self.getAgents():
+            # Won't necessarily match the real resource growth, but it's a good approximation.
+            agent.getView().growResources(self.getResourceGrowthFrequency())
+
         # Reset agents' round endowments
         for agent in self.getAgents():
             agent.setRoundEndowment(0)
