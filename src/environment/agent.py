@@ -116,7 +116,6 @@ class Agent:
         for agent, action in seen_actions:
             if isinstance(action, Gather) and \
                 not board.isSurroundedByResources(*agent.getPosition()):
-                print(f"Agent {self.id} saw agent {agent.getId()} illegally gather at {agent.getPosition()} from {self.getPosition()}")
                 self.addSeenGather(agent, agent.getPosition())
 
         # Update the agent's view of the board
