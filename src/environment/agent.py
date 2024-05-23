@@ -78,9 +78,12 @@ class Agent:
     def addSeenGather(self, accused, position):
         self.seen_gathers.setdefault(accused, set()).add(position)
 
+    def couldSee(self, from_i, from_j, i, j):
+        return (from_i - self.sight_radius <= i <= from_i + self.sight_radius and
+                from_j - self.sight_radius <= j <= from_j + self.sight_radius)
+
     def canSee(self, i, j):
-        return (self.position[0] - self.sight_radius <= i <= self.position[0] + self.sight_radius and
-                self.position[1] - self.sight_radius <= j <= self.position[1] + self.sight_radius)
+        return self.couldSee(self.position[0], self.position[1], i, j)
 
     def incrementEndowment(self):
         self.endowment += 1
@@ -108,20 +111,21 @@ class Agent:
         if self.view is not None and other.getView() is not None:
             self.view.merge(other.getView())
 
-    def act(self, timestamp, board, seen_actions):
+    def act(self, board, seen_actions):
         # Store any seen gathers of non-surrounded resources
         for agent, action in seen_actions:
             if isinstance(action, Gather) and \
-                not board.isSurroundedByResources(agent.getPosition()[0], agent.getPosition()[1]):
+                not board.isSurroundedByResources(*agent.getPosition()):
+                print(f"Agent {self.id} saw agent {agent.getId()} illegally gather at {agent.getPosition()} from {self.getPosition()}")
                 self.addSeenGather(agent, agent.getPosition())
 
         # Update the agent's view of the board
-        self.perceive(timestamp, board)
+        self.perceive(board)
 
         # Pick an action to take based on the agent's behavior
         return self.behavior.act(self.view, seen_actions)
 
-    def perceive(self, timestamp, board):
+    def perceive(self, board):
         # If the view hasn't been initialized yet, initialize it
         if self.view is None:
             self.view = Board(board.getSize())
@@ -129,8 +133,8 @@ class Agent:
         # Merge the visible portion of the board into the agent's view
         rect = (self.position[0] - self.sight_radius,
                 self.position[1] - self.sight_radius,
-                self.position[0] + self.sight_radius + 1,
-                self.position[1] + self.sight_radius + 1)
+                self.position[0] + self.sight_radius,
+                self.position[1] + self.sight_radius)
         self.view.merge(board, rect)
 
     def accuse(self):

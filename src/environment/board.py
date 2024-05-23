@@ -385,7 +385,6 @@ class Board:
         for k in range(i - radius, i + radius + 1):
             for l in range(j - radius, j + radius + 1):
                 if self.withinBounds(k, l) and self.hasAgent(k, l) and (k, l) != ignore:
-                    if k != i or l != j:
                         return True
         return False
 

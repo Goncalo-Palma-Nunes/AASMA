@@ -176,6 +176,7 @@ class Game:
         self.votes = {}
         self.number_of_votes = (0, 0)
         self.accused = None
+        self.previous_positions = { agent: agent.getPosition() for agent in self.getAgents() }
 
     ###########################
     ### Getters and setters ###
@@ -388,28 +389,29 @@ class Game:
                 return self.stats
                     
             # Advance the timestamp of the board cells
-            timestamp = self.getCurrentTurn() + self.getCurrentRound() * self.getNumTurns()
+            timestamp = self.getCurrentTurn() + self.getCurrentRound() * self.getNumTurns() + 1
             self.getBoard().setTimestamp(timestamp)
 
             # Make agents communicate
             for ag1 in self.getAgents():
                 for ag2 in self.getAgents():
-                    if ag1 != ag2 and ag1.canSee(ag2.getPosition()[0], ag2.getPosition()[1]):
+                    if ag1 != ag2 and ag1.canSee(*ag2.getPosition()):
                         ag1.receiveInformation(ag2)
 
             # Collect actions from agents
             new_actions = []
             for agent in self.getAgents():
                 if not agent.isImprisoned(): # Skip imprisoned agents
-                    seen_actions = [(ag, ac) for ag, ac in self.actions if ag != agent and agent.canSee(ag.getPosition()[0], ag.getPosition()[1])]
-                    new_actions.append((agent, agent.act(timestamp, self.getBoard(), seen_actions)))
+                    seen_actions = [(ag, ac) for ag, ac in self.actions if ag != agent and agent.couldSee(*self.previous_positions[agent], *self.previous_positions[ag])]
+                    new_actions.append((agent, agent.act(self.getBoard(), seen_actions)))
             self.actions = new_actions
 
             # Execute actions in a random order
             self.actions.sort(key=lambda x: random())
             for agent, action in self.actions:
+                self.previous_positions[agent] = agent.getPosition()
                 action.execute(agent, self.getBoard())
-            
+
             self.nextTurn()
         
         return self.stats
