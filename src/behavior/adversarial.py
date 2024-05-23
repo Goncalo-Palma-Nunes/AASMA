@@ -1,4 +1,5 @@
 from environment import Gather
+from .greedy import GreedyBehavior
 from .cooperative import CooperativeBehavior
 
 class AdversarialBehavior(CooperativeBehavior):
@@ -18,10 +19,10 @@ class AdversarialBehavior(CooperativeBehavior):
         return super().act(view, seen_actions)
 
     def accuse(self):
-        return super().accuse()
+        return GreedyBehavior.accuse(self)
 
     def vote(self, accused_actions, accused):
-        return super().vote(accused_actions, accused)
+        return GreedyBehavior.vote(self, accused_actions, accused)
 
     def __str__(self) -> str:
         return "Adversarial"
