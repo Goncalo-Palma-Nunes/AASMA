@@ -45,10 +45,10 @@ class Game:
             endowments = {}
             for agent in self.game.agents: # for each agent
                 behavior = agent.getBehavior() # get the behavior
-                if behavior not in endowments: # if the behavior is not in the endowments
-                    endowments[behavior.__str__()] = [] # create a list for the behavior
-                endowments[behavior.__str__()].append(agent.roundEndowment) # append the agent's endowment to the behavior's list
-            
+                behavior_str = behavior.__str__()
+                if behavior_str not in endowments: # if the behavior is not in the endowments
+                    endowments[behavior_str] = [] # create a list for the behavior
+                endowments[behavior_str].append(agent.roundEndowment) # append the agent's endowment to the behavior's list
             return endowments
 
         def getAverageEndowmentByBehavior(self):
@@ -110,6 +110,23 @@ class Game:
 
         def getStats(self):
             return self.round_stats
+        
+        def getStatsType(self, stats_type):
+            if stats_type == "average_endowment":
+                return self.average_endowment
+            elif stats_type == "median_endowment":
+                return self.median_endowment
+            elif stats_type == "max_endowment":
+                return self.max_endowment
+            elif stats_type == "min_endowment":
+                return self.min_endowment
+            elif stats_type == "variance_endowment":
+                return self.variance_endowment
+            elif stats_type == "standard_deviation_endowment":
+                return self.standard_deviation_endowment
+        
+        def getStatsRound(self):
+            return self.stats_round
         
         def printStats(self):
             print("Round: ", self.stats_round + 1)

@@ -1,6 +1,7 @@
 from behavior import RandomBehavior, GreedyBehavior, CooperativeBehavior, AdversarialBehavior
 from environment import Game
 from ui import UI
+from graph_stats import Graph_Stats
 
 import pygame
 
@@ -49,13 +50,8 @@ if __name__ == "__main__":
     # Prepare agent sprites
     ui.setAgentSprites()
 
-    # Prepare variables to store statistics
-    stats = {"average_endowment": [], "median_endowment": [], 
-             "max_endowment": [], "min_endowment": [], 
-             "variance_endowment": [], "standard_deviation_endowment": []}
-    
-
     running = True
+    done = False
     last_step_time = pygame.time.get_ticks()
     while running:
         for event in pygame.event.get():
@@ -63,7 +59,15 @@ if __name__ == "__main__":
                 running = False
 
         current_time = pygame.time.get_ticks()
+        
         if game.getDone():
+            if not done:
+                round_stats.printStats()
+                graph = Graph_Stats(round_stats)
+                for key in round_stats.getStats()[0].keys():
+                    graph.draw_lines_graph(key)
+                done = True
+                
             ui.drawBoard()
             ui.drawGameOver()
         elif game.isRound():
@@ -76,8 +80,6 @@ if __name__ == "__main__":
                 if current_time >= last_step_time + turn_time:
                     last_step_time = current_time
                     round_stats = game.step()
-                    if (game.getDone()):
-                        round_stats.printStats()
 
                 # Draw the board
                 ui.drawBoard()
