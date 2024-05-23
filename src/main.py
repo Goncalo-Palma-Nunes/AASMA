@@ -1,7 +1,7 @@
 from behavior import RandomBehavior, GreedyBehavior, CooperativeBehavior, AdversarialBehavior
 from environment import Game
 from ui import UI
-from plot_stats import Plot_Stats
+from analysis import Analyse_Data, Individual_Plot
 
 import pygame
 
@@ -63,11 +63,15 @@ if __name__ == "__main__":
         if game.getDone():
             if not done:
                 round_stats.printStats()
-                print(game.getTotalReward())
-                plot = Plot_Stats(game, round_stats)
-                for key in round_stats.getStats()[0].keys():
-                    plot.call_stats_type_plots(key)
-                plot.draw_total_reward_bar_plot()
+                print(game.getTotalRewardByBehavior())
+                analyse = Analyse_Data()
+                analyse.receiveData(game.getTotalRewardByBehavior(), 'total_rewards')
+                analyse.receiveData(round_stats.getTotalRewardsPerRound(), 'round_rewards')
+                plot = Individual_Plot(game, round_stats)
+                keys = list(round_stats.getStats()[0].keys())[:-1]
+                for key in keys:
+                    plot.callStatsTypePlots(key)
+                plot.drawTotalRewardBarPlot()
                 done = True 
             ui.drawBoard()
             ui.drawGameOver()

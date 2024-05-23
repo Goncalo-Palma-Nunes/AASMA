@@ -19,6 +19,7 @@ class Game:
             self.variance_endowment = []
             self.standard_deviation_endowment = []
             self.stats_round = 0
+            self.total_rewards = []
 
         def computeRoundStats(self):
             round_stats = {}
@@ -28,6 +29,7 @@ class Game:
             round_stats["min_endowment"] = self.getMinEndowmentByBehavior()
             round_stats["variance_endowment"] = self.getVarianceEndowmentByBehavior()
             round_stats["standard_deviation_endowment"] = self.getStandardDeviationEndowmentByBehavior()
+            round_stats["total_reward"] = self.game.getTotalReward()
             self.stats_round = self.game.getCurrentRound()
             return round_stats
 
@@ -39,8 +41,11 @@ class Game:
             self.min_endowment.append(round_stats["min_endowment"])
             self.variance_endowment.append(round_stats["variance_endowment"])
             self.standard_deviation_endowment.append(round_stats["standard_deviation_endowment"])
+            self.total_rewards.append(round_stats["total_reward"])
 
-
+        def getTotalRewardsPerRound(self):
+            return self.total_rewards
+        
         def getEndowmentsByBehavior(self):
             endowments = {}
             for agent in self.game.agents: # for each agent
@@ -136,6 +141,7 @@ class Game:
             print("Min endowment: ", self.min_endowment)
             print("Variance endowment: ", self.variance_endowment)
             print("Standard deviation endowment: ", self.standard_deviation_endowment)
+            print("Total rewards: ", self.total_rewards)
             print("")
 
 
