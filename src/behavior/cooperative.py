@@ -49,7 +49,7 @@ class CooperativeBehavior(GreedyBehavior):
         return super().accuse()
 
     def vote(self, accused_actions, accused):
-        return len(accused_actions) > 0
+        return len(accused_actions) > 0 and accused != self.getAgent()
 
     def __str__(self) -> str:
         return "Cooperative"
