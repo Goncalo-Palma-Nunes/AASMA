@@ -53,11 +53,14 @@ class Move(Action):
         if choices:
             return Move(random.choice(choices))
         else:
-            return Move.random()
+            return Move(STAY)
 
     ###########################
     ### Getters and Setters ###
     ###########################
+
+    def isStay(self):
+        return self.direction == STAY
 
     def getNextPosition(self, old_i, old_j):
         if self.direction == UP:

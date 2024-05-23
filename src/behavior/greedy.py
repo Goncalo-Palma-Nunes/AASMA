@@ -30,7 +30,7 @@ class GreedyBehavior(Behavior):
 
     def checkMove(self, view, move):
         if move is not None:
-            if view.isFreeToMove(*move.getNextPosition(*self.getPosition())):
+            if move.isStay() or view.isFreeToMove(*move.getNextPosition(*self.getPosition())):
                 return move
         return Move.random()
 

@@ -16,7 +16,7 @@ class AdversarialBehavior(CooperativeBehavior):
         return not view.anyAgentsInRadius(position, self.getAgent().getSightRadius(), ignore=self.getPosition())
 
     def act(self, view, seen_actions):
-        return super().act(view, seen_actions)
+        return GreedyBehavior.act(self, view, seen_actions)
 
     def accuse(self):
         return GreedyBehavior.accuse(self)
