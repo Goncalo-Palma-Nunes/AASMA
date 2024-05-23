@@ -9,8 +9,9 @@ from .greedy import GreedyBehavior
 PROTECT_RESOURCE_THRESHOLD = 10
 
 class CooperativeBehavior(GreedyBehavior):
-    def __init__(self, growth_frequency):
+    def __init__(self, resource_frequency, growth_frequency):
         super().__init__()
+        self.resource_frequency = resource_frequency
         self.growth_frequency = growth_frequency
         self.sustainable_consumption = 0
 
@@ -31,7 +32,7 @@ class CooperativeBehavior(GreedyBehavior):
         move = self.moveTowardsClosestResource(view)
         if move is None:
             # There are no sustainable resources left.
-            if view.getResourceCount() < PROTECT_RESOURCE_THRESHOLD:
+            if view.estimateResourceCount(self.resource_frequency) < PROTECT_RESOURCE_THRESHOLD:
                 # There are very few resources, so we'll try to protect them from non-cooperative agents.
                 # Find the closest non-occupied resource and stay there.
                 if view.hasResource(*self.getPosition()):

@@ -5,17 +5,16 @@ from plot_stats import Plot_Stats
 
 import pygame
 
-
 if __name__ == "__main__":
     # Set some parameters
-    speed_multiplier = 10
+    speed_multiplier = 20
     cell_size = 32
     sprite_scale = cell_size / 16
     board_size = 32
     resource_frequency = 0.1
     resource_growth_frequency = 0.2
     sight_radius = 4
-    num_rounds = 10
+    num_rounds = 20
     num_turns = 100 # Turns per round
     turn_time = 200 / speed_multiplier # Milliseconds per game turn
     accusation_individual_time = 1000 / speed_multiplier # Milliseconds the accusation screen is shown
@@ -35,9 +34,9 @@ if __name__ == "__main__":
     for i in range(greedy_count):
         behaviors.append(GreedyBehavior())
     for i in range(cooperative_count):
-        behaviors.append(CooperativeBehavior(resource_growth_frequency))
+        behaviors.append(CooperativeBehavior(resource_frequency, resource_growth_frequency))
     for i in range(adversarial_count):
-        behaviors.append(AdversarialBehavior(resource_growth_frequency))
+        behaviors.append(AdversarialBehavior(resource_frequency, resource_growth_frequency))
     agent_count = len(behaviors)
 
     # Initialize the game

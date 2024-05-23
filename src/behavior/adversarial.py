@@ -3,8 +3,8 @@ from .greedy import GreedyBehavior
 from .cooperative import CooperativeBehavior
 
 class AdversarialBehavior(CooperativeBehavior):
-    def __init__(self, growth_frequency):
-        super().__init__(growth_frequency)
+    def __init__(self, resource_frequency, growth_frequency):
+        super().__init__(resource_frequency, growth_frequency)
         self.gather = Gather()
 
     def getColor(self):
