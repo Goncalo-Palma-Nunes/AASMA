@@ -240,7 +240,8 @@ class Game:
     def getOrderedAccusedList(self):
         accusation_count = {}
         for player in self.getAgents():
-            accusation_count[player] = 0
+            if not player.isImprisoned():
+                accusation_count[player] = 0
         for accused in self.getAccusations().values():
             if accused in accusation_count:
                 accusation_count[accused] += 1
