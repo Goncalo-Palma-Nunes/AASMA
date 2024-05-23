@@ -235,9 +235,10 @@ class Game:
         rewards = {}
         for agent in self.getAgents():
             behavior = agent.getBehavior()
-            if behavior not in rewards:
-                rewards[behavior] = 0
-            rewards[behavior] += agent.getEndowment()
+            behavior_str = behavior.__str__()
+            if behavior_str not in rewards:
+                rewards[behavior_str] = 0
+            rewards[behavior_str] += agent.getEndowment()
         return rewards
     
     def getOrderedAccusedList(self):

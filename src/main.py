@@ -1,7 +1,7 @@
 from behavior import RandomBehavior, GreedyBehavior, CooperativeBehavior, AdversarialBehavior
 from environment import Game
 from ui import UI
-from graph_stats import Graph_Stats
+from plot_stats import Plot_Stats
 
 import pygame
 
@@ -64,14 +64,15 @@ if __name__ == "__main__":
         if game.getDone():
             if not done:
                 round_stats.printStats()
-                graph = Graph_Stats(round_stats)
+                print(game.getTotalReward())
+                plot = Plot_Stats(game, round_stats)
                 for key in round_stats.getStats()[0].keys():
-                    graph.draw_line_plot(key)
-                    graph.draw_bar_plot(key)
-                done = True
-                
+                    plot.call_stats_type_plots(key)
+                plot.draw_total_reward_bar_plot()
+                done = True 
             ui.drawBoard()
             ui.drawGameOver()
+            
         elif game.isRound():
             if game.getCurrentRound() > 0 and game.getCurrentTurn() == 0 and current_time < last_step_time + voting_individual_time:
                 ui.drawPopUpVotingList()

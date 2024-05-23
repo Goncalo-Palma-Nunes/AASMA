@@ -2,12 +2,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.patches as mpatches
 
-class Graph_Stats:
-    def __init__(self, stats):
+class Plot_Stats:
+    def __init__(self, game, stats):
         self.stats = stats
+        self.game = game
         
     def getStats(self):
         return self.stats
+    
+    def getGame(self):
+        return self.game
+    
+    def call_stats_type_plots(self, stats_type):
+        self.draw_line_plot(stats_type)
+        self.draw_bar_plot(stats_type)
     
     def draw_line_plot(self, stats_type):
         plt.clf()
@@ -21,13 +29,13 @@ class Graph_Stats:
  
         plt.xlabel('Rounds')
         plt.ylabel(f"{stats_type}")
-        plt.title(f"Graph of {stats_type} in {self.stats.getStatsRound() + 1} Rounds")
+        plt.title(f"{stats_type} in {self.stats.getStatsRound() + 1} Rounds")
         plt.legend()
         
          # Set x-axis ticks to integer values
         plt.xticks(range(1, self.stats.getStatsRound() + 2))
  
-        plt.savefig(f'graphs/{stats_type}_line_plot.png')
+        plt.savefig(f'plots/{stats_type}_line_plot.png')
         plt.close()
         
     def draw_bar_plot(self, stats_type):
@@ -55,7 +63,31 @@ class Graph_Stats:
         
         plt.ylabel(f"{stats_type}")
         plt.xlabel(f"Rounds")
-        plt.title(f"Graph of {stats_type} in {self.stats.getStatsRound() + 1} Rounds")
+        plt.title(f"{stats_type} in {self.stats.getStatsRound() + 1} Rounds")
         
-        plt.savefig(f'graphs/{stats_type}_bar_plot.png')
+        plt.savefig(f'plots/{stats_type}_bar_plot.png')
+        plt.close()
+    
+    # Draw a bar plot of the total reward of each agent type for the whole game    
+    def draw_total_reward_bar_plot(self):
+        rewards = self.getGame().getTotalRewardByBehavior()
+        print(rewards)
+        agent_types = list(rewards.keys())
+        
+        left = list(range(1, len(agent_types) + 1))
+        height = [rewards[agent_types[i]] for i in range(len(agent_types))]
+        tick_label = agent_types
+        
+        colors = plt.cm.viridis(np.linspace(0, 1, len(agent_types)))
+        
+        plt.bar(left, height, tick_label=tick_label, width=0.8, color=colors)
+
+        legend_handles = [mpatches.Patch(color=colors[i], label=agent_types[i]) for i in range(len(agent_types))]
+        plt.legend(handles=legend_handles, title="Agent Types")
+        
+        plt.ylabel(f"Total reward")
+        plt.xlabel(f"Agents")
+        plt.title(f"Total reward by each agent type after {self.stats.getStatsRound() + 1} Rounds")
+        
+        plt.savefig(f'plots/total_reward_bar_plot.png')
         plt.close()
