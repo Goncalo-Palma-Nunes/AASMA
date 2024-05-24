@@ -14,7 +14,3 @@ Before being able to run the **main.py** script, along with the code that genera
 
 To run the project, execute the python file **main.py** in the folder **src**.
 You tune the parameters of the simulation in the **main.py** file.
-
-# Video
-
-A link to the video presentation of the project can be found [here](https://www.youtube.com/watch?v=tl5DQKWg1Fg).
