@@ -112,7 +112,6 @@ class Game:
 
             return endowments
 
-
         def getStats(self):
             return self.round_stats
         
@@ -183,6 +182,7 @@ class Game:
         self.number_of_votes = (0, 0)
         self.accused = None
         self.previous_positions = { agent: agent.getPosition() for agent in self.getAgents() }
+        self.num_banned_agents = { agent: 0 for agent in self.getNumOfAgentTypes()}
 
     ###########################
     ### Getters and setters ###
@@ -226,6 +226,9 @@ class Game:
 
     def getResourceGrowthFrequency(self):
         return self.resource_growth_frequency
+    
+    def getNumBannedAgentsByBehavior(self):
+        return self.num_banned_agents
 
     ###########################
     ###       Methods       ###
@@ -318,9 +321,17 @@ class Game:
 
     def setVotes(self, votes):
         self.votes = votes
+    
+    def addBannedAgents(self, agent):
+        behavior = agent.getBehavior().__str__()
+        print(f"{behavior} was banned.")
+        if behavior not in self.num_banned_agents:
+            self.num_banned_agents[behavior] = 0
+        self.num_banned_agents[behavior] += 1
 
     def imprison(self, agent):
         agent.imprison()
+        self.addBannedAgents(agent)
         self.getBoard().takeAgent(*agent.getPosition())
 
     def remainingTurns(self):

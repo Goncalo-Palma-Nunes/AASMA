@@ -140,6 +140,11 @@ class Individual_Plot():
     def callStatsTypePlots(self, stats_type):
         self.drawLinePlot(stats_type)
         self.drawBarPlot(stats_type)
+        
+    def callBarTypePlots(self):
+        self.drawTotalBarPlot(self.getGame().getTotalRewardByBehavior(), "total_rewards")
+        if self.getGame().getNumBannedAgentsByBehavior() is not None:
+            self.drawTotalBarPlot(self.getGame().getNumBannedAgentsByBehavior(), "num_banned_agents")
     
     def drawLinePlot(self, stats_type):
         stats_list = self.getStats().getStatsType(stats_type)
@@ -191,9 +196,8 @@ class Individual_Plot():
         plt.savefig(f'src/analysis/individual_game_plots/{stats_type}_bar_plot.png')
         plt.close()
     
-    # Draw a bar plot of the total reward of each agent type for the whole game    
-    def drawTotalRewardBarPlot(self):
-        rewards = self.getGame().getTotalRewardByBehavior()
+    # Draw a bar plot of a stat of each agent type at the end of the game    
+    def drawTotalBarPlot(self, rewards, plot_type):
         agent_types = list(rewards.keys())
         
         left = list(range(1, len(agent_types) + 1))
@@ -207,9 +211,9 @@ class Individual_Plot():
         legend_handles = [mpatches.Patch(color=colors[i], label=agent_types[i]) for i in range(len(agent_types))]
         plt.legend(handles=legend_handles, title="Agent Types")
         
-        plt.ylabel(f"Total reward")
+        plt.ylabel(f"{plot_type}")
         plt.xlabel(f"Agents")
-        plt.title(f"Total reward by each agent type after {self.stats.getStatsRound() + 1} Rounds")
+        plt.title(f"{plot_type} by each agent type after {self.stats.getStatsRound() + 1} Rounds")
         
-        plt.savefig(f'src/analysis/individual_game_plots/total_reward_bar_plot.png')
+        plt.savefig(f'src/analysis/individual_game_plots/{plot_type}_bar_plot.png')
         plt.close()
