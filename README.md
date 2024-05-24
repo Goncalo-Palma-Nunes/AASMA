@@ -13,3 +13,7 @@ or
 Before being able to run the **main.py** script, along with the code that generates the plots, run **folder_setup.py** to create the necessary folders to store the plots in.
 
 To run the project, execute the python file **main.py** in the folder **src**
+
+# Video
+
+A link to the video presentation of the project can be found [here](https://www.youtube.com/watch?v=tl5DQKWg1Fg).
