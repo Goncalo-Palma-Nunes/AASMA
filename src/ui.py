@@ -149,8 +149,11 @@ class UI:
         ###       Methods       ###
         ###########################
         
-        def drawBackground(self, board_size, screen):
+        def setCenter(self, board_size):
             self.center = (board_size * self.getCellSize() / 2, board_size * self.getCellSize() / 2)
+        
+        def drawBackground(self, board_size, screen):
+            self.setCenter(board_size)
             self.box_size = (self.getCols() * self.getColSize() * self.getCellSize(), self.getRows() * self.getRowSize()  * self.getCellSize())
             self.box_position = (self.center[0] - self.box_size[0] / 2, self.center[1] - self.box_size[1] / 2)
             self.box_size_background = (self.getCols() * self.getColSize() * self.getCellSize() + (self.getRowSize() * self.getCellSize() / 3), self.getRows() * self.getRowSize() * self.getCellSize() + self.getRowSize() * self.getCellSize())
@@ -416,6 +419,9 @@ class UI:
         
     def drawGameOver(self):
         pop_up = self.getPopUp()
+        board_size = self.getBoard().getSize()
+        pop_up.setCenter(board_size)
+        
         new_font = pygame.font.SysFont("arialblack", self.getCellSize() * 2)
         
         position = (pop_up.getCenter()[0] / self.getCellSize(), pop_up.getCenter()[1] / self.getCellSize())
