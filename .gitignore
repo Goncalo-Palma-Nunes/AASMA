@@ -167,4 +167,5 @@ plots
 src/analysis/bar_plots
 src/analysis/line_plots
 src/analysis/txts
-src/analysis/individual_game_plots
+src/analysis/individual_game_plots/*.png
+src/analysis/individual_game_plots/scenario*
