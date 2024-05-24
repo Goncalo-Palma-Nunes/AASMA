@@ -24,8 +24,8 @@ if __name__ == "__main__":
 
     random_count = 0
     greedy_count = 0
-    cooperative_count = 15
-    adversarial_count = 0
+    cooperative_count = 0
+    adversarial_count = 20
 
     # Initialize behaviors
     behaviors = []
@@ -66,11 +66,12 @@ if __name__ == "__main__":
                 print(game.getTotalRewardByBehavior(), game.getNumBannedAgentsByBehavior())
                 analyse = Analyse_Data()
                 analyse.receiveData(game.getTotalRewardByBehavior(), 'total_rewards')
-                analyse.receiveData(round_stats.getTotalRewardsPerRound(), 'round_rewards')
+                analyse.receiveData(round_stats.fillCumulative(), 'cumulative_rewards')
                 plot = Individual_Plot(game, round_stats)
                 keys = list(round_stats.getStats()[0].keys())[:-1]
                 for key in keys:
                     plot.callStatsTypePlots(key)
+                    analyse.receiveData(round_stats.fillTypeStats(key), f'{key}_per_round')
                 plot.callBarTypePlots()
                 done = True 
             ui.drawBoard()

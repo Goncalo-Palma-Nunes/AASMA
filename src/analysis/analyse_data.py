@@ -34,6 +34,7 @@ class Analyse_Data():
                 file.write(str(data) + '\n') # total_rewards
     
     def setDataTotal(self, fname):
+        self.num_simulations = 0
         total_rewards = []
         with open(f'src/analysis/txts/{fname}.txt', 'r') as infile:
             for line in infile:
@@ -42,11 +43,12 @@ class Analyse_Data():
         self.data_total = total_rewards
     
     def setDataRound(self, fname):
+        self.num_simulations = 0
         round_rewards = []
         with open(f'src/analysis/txts/{fname}.txt', 'r') as infile:
             for line in infile:
                 round_rewards.append(ast.literal_eval(line.strip()))
-                #self.num_simulations += 1
+                self.num_simulations += 1
         self.num_rounds = len(round_rewards[0])
         self.data_round = round_rewards
         
@@ -108,21 +110,22 @@ class Analyse_Data():
         plt.savefig(f'src/analysis/bar_plots/{stats_type}_with_{self.getNumSimulations()}_sims_bar_plot.png')
         plt.close()
         
-    def drawLinePlot(self):        
+    def drawLinePlot(self, type):
+        agent_types = ['Random', 'Greedy', 'Cooperative', 'Adversarial']  
         for i in range(self.getNumSimulations()):
             x = list(range(1, self.getNumRounds() + 1))
             y = [self.getDataRound()[i][j] for j in range(self.getNumRounds())]
-            plt.plot(x, y, label = f"Simulation {i+1}")
+            plt.plot(x, y, label = f"Simulation with 20 {agent_types[i]} agents")
  
         plt.xlabel('Rounds')
-        plt.ylabel(f"Total reward")
-        plt.title(f"Total reward per round ({self.getNumRounds()} rounds)")
+        plt.ylabel(f"{type}")
+        plt.title(f"{type} ({self.getNumRounds()} rounds)")
         plt.legend()
         
          # Set x-axis ticks to integer values
         plt.xticks(range(1, self.getNumRounds() + 1))
  
-        plt.savefig(f'src/analysis/line_plots/{self.getNumSimulations()}_simulations_during_{self.getNumRounds()}_rounds_line_plot.png')
+        plt.savefig(f'src/analysis/line_plots/{type}_with_{self.getNumSimulations()}_simulations_during_{self.getNumRounds()}_rounds_line_plot.png')
         plt.close()
 
 

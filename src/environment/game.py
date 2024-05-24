@@ -132,6 +132,28 @@ class Game:
         def getStatsRound(self):
             return self.stats_round
         
+        def sortStatsInList(self, stats_type):
+            stats_list = []
+            stats = self.getStatsType(stats_type)
+            for i in range(len(stats)):
+                for val in stats[i].values():
+                    stats_list.append(val)
+            return stats_list
+        
+        def fillTypeStats(self, key):
+            filler_value = 0
+            num_rounds = self.game.getNumRounds()
+            fill_count = num_rounds - len(self.sortStatsInList(key))
+            extended = self.sortStatsInList(key) + [filler_value] * fill_count
+            return extended
+        
+        def fillCumulative(self):
+            filler_value = self.getTotalRewardsPerRound()[-1]
+            num_rounds = self.game.getNumRounds()
+            fill_count = num_rounds - len(self.getTotalRewardsPerRound())
+            extended = self.getTotalRewardsPerRound() + [filler_value] * fill_count
+            return extended
+            
         def printStats(self):
             print("Round: ", self.stats_round + 1)
             print("Average endowment: ", self.average_endowment)
