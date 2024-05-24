@@ -61,10 +61,7 @@ class GreedyBehavior(Behavior):
         return None
 
     def vote(self, consumption, accused):
-        # Votes true if it has seen the accused agent gathering more than itself
-        if accused == self.getAgent():
-            return False
-        return len(consumption) > self.getAgent().getRoundEndowment()
+        return accused != self.getAgent()
     
     def __str__(self) -> str:
         return "Greedy"
